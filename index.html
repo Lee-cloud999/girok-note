@@ -20,7 +20,15 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-size:13px}.chip.on{background:var(--lav2);border-color:var(--lav3)}
 .record,.planCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0}.planCard{border-left:5px solid var(--lav3)}.recordTitle{font-weight:850}.recordBody{white-space:pre-wrap;line-height:1.6;margin-top:8px}
 .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.badge{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 9px;border-radius:999px;background:var(--lav1);font-size:12px;font-weight:800}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.planTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.planTabs button{background:#fff;border:1px solid var(--line);font-size:13px}.planTabs button.active{background:var(--lav2)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.planOverviewGrid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+.planOverviewCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}
+.planOverviewHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.planOverviewHead b{font-size:16px}
+.planOverviewBody{line-height:1.55}
+.planOverviewBody ul{margin:8px 0 0 18px;padding:0}
+.planOverviewEmpty{color:var(--muted);font-size:14px}
+.planOverviewControls{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.planTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.planTabs button{background:#fff;border:1px solid var(--line);font-size:13px}.planTabs button.active{background:var(--lav2)}
 .bottomnav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));z-index:20}.bottomnav button{background:transparent;font-size:12px;padding:8px 4px}.bottomnav button.active{background:var(--lav1)}
 .auth{max-width:470px;margin:48px auto}.hero{width:72px;height:72px;border-radius:24px;background:var(--lav2);display:grid;place-items:center;margin:0 auto 12px;font-size:34px}.center{text-align:center}
 .checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
@@ -52,9 +60,49 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 </section>
 
 <section id="tabPlan" class="hidden">
-<div class="card"><h1>계획</h1><p class="muted">연간부터 일간까지 필요한 만큼만 적어두세요.</p><div class="planTabs"><button data-plan="year" class="active">연간</button><button data-plan="month">월간</button><button data-plan="week">주간</button><button data-plan="day">일간</button></div></div>
-<div class="card"><h2 id="planHeading">연간계획</h2><input id="period" placeholder="예: 2026년"><br><br><textarea id="goal" placeholder="핵심 목표"></textarea><br><br><textarea id="tasks" placeholder="할 일을 한 줄에 하나씩 적어주세요."></textarea><br><br><textarea id="memo" placeholder="메모 (선택)"></textarea><button id="savePlan" class="primary" style="width:100%;margin-top:10px">계획 저장</button></div>
-<div id="plans"></div>
+<div class="card">
+  <h1>계획 한눈에 보기</h1>
+  <p class="muted">기준일에 해당하는 연간·월간·주간·일간 계획을 한 화면에서 볼 수 있어요.</p>
+  <div class="planOverviewControls">
+    <div>
+      <label class="tiny">기준일</label>
+      <input id="overviewDate" type="date">
+    </div>
+    <button id="todayOverview" class="secondary">오늘</button>
+  </div>
+  <div id="planOverview" class="planOverviewGrid"></div>
+</div>
+
+<div class="card">
+  <h1>계획 입력</h1>
+  <p class="muted">연간, 월간, 주간, 일간 계획은 각각 따로 작성할 수 있어요.</p>
+  <div class="planTabs">
+    <button data-plan="year" class="active">연간</button>
+    <button data-plan="month">월간</button>
+    <button data-plan="week">주간</button>
+    <button data-plan="day">일간</button>
+  </div>
+</div>
+
+<div class="card">
+  <h2 id="planHeading">연간계획</h2>
+  <label class="tiny">이 계획의 기준 날짜</label>
+  <input id="planBaseDate" type="date">
+  <br><br>
+  <input id="period" readonly>
+  <br><br>
+  <textarea id="goal" placeholder="핵심 목표"></textarea>
+  <br><br>
+  <textarea id="tasks" placeholder="할 일을 한 줄에 하나씩 적어주세요."></textarea>
+  <br><br>
+  <textarea id="memo" placeholder="메모 (선택)"></textarea>
+  <button id="savePlan" class="primary" style="width:100%;margin-top:10px">계획 저장</button>
+</div>
+
+<div class="card">
+  <div class="top"><h2>저장된 계획</h2><span class="tiny">선택한 유형 기준</span></div>
+  <div id="plans"></div>
+</div>
 </section>
 
 <section id="tabBrowse" class="hidden">
@@ -73,7 +121,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 </main>
 
 <nav id="nav" class="bottomnav hidden">
-<button data-tab="Record" class="active">✍️<br>기록</button><button data-tab="Plan">계획</button><button data-tab="Browse">🔎<br>모아보기</button><button data-tab="Daily">🌙<br>하루정리</button>
+<button data-tab="Record" class="active">✍️<br>기록</button><button data-tab="Plan">🗓️<br>계획</button><button data-tab="Browse">🔎<br>모아보기</button><button data-tab="Daily">🌙<br>하루정리</button>
 </nav>
 <div id="toast"></div>
 
@@ -106,13 +154,198 @@ function renderToday(){let key=dayKey(),a=records.filter(r=>{let d=when(r);retur
 function renderAll(){let q=$("search").value.toLowerCase(),f=$("filter").value,a=records.filter(r=>(!f||r.type===f)&&(!q||((r.title||"")+" "+(r.text||"")+" "+(r.tags||[]).join(" ")).toLowerCase().includes(q)));$("allRecords").innerHTML=a.length?a.map(card).join(""):'<div class="card muted">조건에 맞는 기록이 없어요.</div>';wireDelete()}
 $("search").oninput=renderAll;$("filter").onchange=renderAll;
 const planNames={year:"연간계획",month:"월간계획",week:"주간계획",day:"일간계획"};
-document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>{planKind=b.dataset.plan;document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x===b));$("planHeading").textContent=planNames[planKind];$("period").placeholder={year:"예: 2026년",month:"예: 2026년 9월",week:"예: 9월 3주",day:"예: 9월 19일"}[planKind];renderPlans()});
-$("savePlan").onclick=async()=>{let ts=$("tasks").value.split("\n").map(x=>x.trim()).filter(Boolean),data={kind:planKind,period:$("period").value.trim(),goal:$("goal").value.trim(),tasks:ts,memo:$("memo").value.trim(),doneTasks:[],createdAt:serverTimestamp(),updatedAt:serverTimestamp()};if(!data.period&&!data.goal&&!data.tasks.length&&!data.memo)return alert("계획 내용을 적어주세요.");await addDoc(collection(db,"users",user.uid,"recordnote_plans"),data);$("period").value="";$("goal").value="";$("tasks").value="";$("memo").value="";toast("계획을 저장했어요");await loadPlans()};
-async function loadPlans(){let s=await getDocs(query(collection(db,"users",user.uid,"recordnote_plans"),orderBy("createdAt","desc")));plans=s.docs.map(d=>({id:d.id,...d.data()}));renderPlans();renderStats()}
-function renderPlans(){let a=plans.filter(p=>p.kind===planKind);$("plans").innerHTML=a.length?a.map(p=>`<div class="planCard"><div class="top"><div><b>${esc(p.period||planNames[p.kind])}</b><div class="tiny">${planNames[p.kind]}</div></div><button class="small danger" data-del-plan="${p.id}">삭제</button></div>${p.goal?`<p><b>핵심 목표</b><br>${esc(p.goal)}</p>`:""}${(p.tasks||[]).length?`<div><b>할 일</b>${p.tasks.map((t,i)=>`<label class="checkItem"><input type="checkbox" data-task-plan="${p.id}" data-index="${i}" ${(p.doneTasks||[]).includes(i)?"checked":""}><span>${esc(t)}</span></label>`).join("")}</div>`:""}${p.memo?`<p><b>메모</b><br>${esc(p.memo)}</p>`:""}</div>`).join(""):'<div class="card muted">아직 저장된 계획이 없어요.</div>';document.querySelectorAll("[data-del-plan]").forEach(b=>b.onclick=async()=>{if(confirm("이 계획을 삭제할까요?")){await deleteDoc(doc(db,"users",user.uid,"recordnote_plans",b.dataset.delPlan));await loadPlans()}});document.querySelectorAll("[data-task-plan]").forEach(c=>c.onchange=async()=>{let p=plans.find(x=>x.id===c.dataset.taskPlan),idx=+c.dataset.index,done=[...(p.doneTasks||[])];if(c.checked&&!done.includes(idx))done.push(idx);if(!c.checked)done=done.filter(x=>x!==idx);await updateDoc(doc(db,"users",user.uid,"recordnote_plans",p.id),{doneTasks:done,updatedAt:serverTimestamp()});await loadPlans()})}
+
+function localDateValue(d=new Date()){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+function dateFromValue(v){
+  const [y,m,d]=v.split("-").map(Number);
+  return new Date(y,m-1,d);
+}
+function mondayOf(date){
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate());
+  const day=d.getDay();
+  const diff=day===0?-6:1-day;
+  d.setDate(d.getDate()+diff);
+  return d;
+}
+function sundayOf(date){
+  const m=mondayOf(date),s=new Date(m);
+  s.setDate(m.getDate()+6);
+  return s;
+}
+function planKey(kind,date){
+  const y=date.getFullYear();
+  if(kind==="year") return String(y);
+  if(kind==="month") return `${y}-${String(date.getMonth()+1).padStart(2,"0")}`;
+  if(kind==="day") return localDateValue(date);
+  return localDateValue(mondayOf(date));
+}
+function planLabel(kind,date){
+  const y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();
+  if(kind==="year") return `${y}년`;
+  if(kind==="month") return `${y}년 ${m}월`;
+  if(kind==="day") return `${y}년 ${m}월 ${d}일`;
+  const a=mondayOf(date),b=sundayOf(date);
+  const sameMonth=a.getMonth()===b.getMonth();
+  return sameMonth
+    ? `${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getDate()}일`
+    : `${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`;
+}
+function syncPlanPeriod(){
+  const v=$("planBaseDate").value||localDateValue();
+  const d=dateFromValue(v);
+  $("period").value=planLabel(planKind,d);
+}
+function latestPlan(kind,key){
+  return plans.find(p=>p.kind===kind && (p.periodKey||"")===key) || null;
+}
+function planOverviewCard(kind,date){
+  const key=planKey(kind,date),p=latestPlan(kind,key);
+  if(!p){
+    return `<div class="planOverviewCard">
+      <div class="planOverviewHead"><b>${planNames[kind]}</b><span class="badge">${esc(planLabel(kind,date))}</span></div>
+      <div class="planOverviewEmpty">아직 저장된 계획이 없어요.</div>
+      <div class="actions"><button class="small" data-overview-add="${kind}">이 계획 작성하기</button></div>
+    </div>`;
+  }
+  return `<div class="planOverviewCard">
+    <div class="planOverviewHead"><b>${planNames[kind]}</b><span class="badge">${esc(p.period||planLabel(kind,date))}</span></div>
+    <div class="planOverviewBody">
+      ${p.goal?`<div><b>핵심 목표</b><br>${esc(p.goal)}</div>`:""}
+      ${(p.tasks||[]).length?`<div style="margin-top:9px"><b>할 일</b><ul>${p.tasks.map((t,i)=>`<li>${(p.doneTasks||[]).includes(i)?"✓ ":""}${esc(t)}</li>`).join("")}</ul></div>`:""}
+      ${p.memo?`<div style="margin-top:9px"><b>메모</b><br>${esc(p.memo)}</div>`:""}
+    </div>
+    <div class="actions"><button class="small" data-overview-edit="${p.id}" data-kind="${kind}">수정하기</button></div>
+  </div>`;
+}
+function renderPlanOverview(){
+  const v=$("overviewDate").value||localDateValue();
+  const d=dateFromValue(v);
+  $("planOverview").innerHTML=["year","month","week","day"].map(k=>planOverviewCard(k,d)).join("");
+  document.querySelectorAll("[data-overview-add]").forEach(b=>b.onclick=()=>{
+    planKind=b.dataset.overviewAdd;
+    document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x.dataset.plan===planKind));
+    $("planHeading").textContent=planNames[planKind];
+    $("planBaseDate").value=$("overviewDate").value;
+    syncPlanPeriod();
+    $("goal").value="";$("tasks").value="";$("memo").value="";
+    $("savePlan").dataset.editId="";
+    window.scrollTo({top:$("planHeading").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});
+  });
+  document.querySelectorAll("[data-overview-edit]").forEach(b=>b.onclick=()=>{
+    const p=plans.find(x=>x.id===b.dataset.overviewEdit); if(!p)return;
+    planKind=b.dataset.kind;
+    document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x.dataset.plan===planKind));
+    $("planHeading").textContent=planNames[planKind];
+    $("planBaseDate").value=p.baseDate||$("overviewDate").value;
+    syncPlanPeriod();
+    $("goal").value=p.goal||"";
+    $("tasks").value=(p.tasks||[]).join("\n");
+    $("memo").value=p.memo||"";
+    $("savePlan").dataset.editId=p.id;
+    window.scrollTo({top:$("planHeading").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});
+  });
+}
+
+$("overviewDate").value=localDateValue();
+$("planBaseDate").value=localDateValue();
+syncPlanPeriod();
+
+$("overviewDate").onchange=renderPlanOverview;
+$("todayOverview").onclick=()=>{$("overviewDate").value=localDateValue();renderPlanOverview()};
+$("planBaseDate").onchange=syncPlanPeriod;
+
+document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>{
+  planKind=b.dataset.plan;
+  document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x===b));
+  $("planHeading").textContent=planNames[planKind];
+  $("planBaseDate").value=$("overviewDate").value||localDateValue();
+  syncPlanPeriod();
+  $("goal").value="";$("tasks").value="";$("memo").value="";
+  $("savePlan").dataset.editId="";
+  renderPlans();
+});
+
+$("savePlan").onclick=async()=>{
+  const baseValue=$("planBaseDate").value||localDateValue();
+  const baseDate=dateFromValue(baseValue);
+  const ts=$("tasks").value.split("\n").map(x=>x.trim()).filter(Boolean);
+  const data={
+    kind:planKind,
+    period:$("period").value,
+    periodKey:planKey(planKind,baseDate),
+    baseDate:baseValue,
+    goal:$("goal").value.trim(),
+    tasks:ts,
+    memo:$("memo").value.trim(),
+    updatedAt:serverTimestamp()
+  };
+  if(!data.goal&&!data.tasks.length&&!data.memo)return alert("계획 내용을 적어주세요.");
+
+  const editId=$("savePlan").dataset.editId;
+  const existing=editId ? plans.find(p=>p.id===editId) : latestPlan(planKind,data.periodKey);
+
+  if(existing){
+    await updateDoc(doc(db,"users",user.uid,"recordnote_plans",existing.id),{
+      ...data,
+      doneTasks:(existing.doneTasks||[]).filter(i=>i<ts.length)
+    });
+  }else{
+    await addDoc(collection(db,"users",user.uid,"recordnote_plans"),{
+      ...data,
+      doneTasks:[],
+      createdAt:serverTimestamp()
+    });
+  }
+  $("goal").value="";$("tasks").value="";$("memo").value="";
+  $("savePlan").dataset.editId="";
+  toast("계획을 저장했어요");
+  await loadPlans();
+};
+
+async function loadPlans(){
+  let s=await getDocs(query(collection(db,"users",user.uid,"recordnote_plans"),orderBy("createdAt","desc")));
+  plans=s.docs.map(d=>({id:d.id,...d.data()}));
+  renderPlans();renderPlanOverview();renderStats();
+}
+function renderPlans(){
+  let a=plans.filter(p=>p.kind===planKind);
+  $("plans").innerHTML=a.length?a.map(p=>`<div class="planCard">
+    <div class="top"><div><b>${esc(p.period||planNames[p.kind])}</b><div class="tiny">${planNames[p.kind]}</div></div><button class="small danger" data-del-plan="${p.id}">삭제</button></div>
+    ${p.goal?`<p><b>핵심 목표</b><br>${esc(p.goal)}</p>`:""}
+    ${(p.tasks||[]).length?`<div><b>할 일</b>${p.tasks.map((t,i)=>`<label class="checkItem"><input type="checkbox" data-task-plan="${p.id}" data-index="${i}" ${(p.doneTasks||[]).includes(i)?"checked":""}><span>${esc(t)}</span></label>`).join("")}</div>`:""}
+    ${p.memo?`<p><b>메모</b><br>${esc(p.memo)}</p>`:""}
+    <div class="actions"><button class="small" data-edit-plan="${p.id}">수정</button></div>
+  </div>`).join(""):'<div class="muted">아직 저장된 계획이 없어요.</div>';
+
+  document.querySelectorAll("[data-del-plan]").forEach(b=>b.onclick=async()=>{
+    if(confirm("이 계획을 삭제할까요?")){
+      await deleteDoc(doc(db,"users",user.uid,"recordnote_plans",b.dataset.delPlan));
+      await loadPlans();
+    }
+  });
+  document.querySelectorAll("[data-edit-plan]").forEach(b=>b.onclick=()=>{
+    let p=plans.find(x=>x.id===b.dataset.editPlan); if(!p)return;
+    $("planBaseDate").value=p.baseDate||localDateValue();
+    syncPlanPeriod();
+    $("goal").value=p.goal||"";
+    $("tasks").value=(p.tasks||[]).join("\n");
+    $("memo").value=p.memo||"";
+    $("savePlan").dataset.editId=p.id;
+    window.scrollTo({top:$("planHeading").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});
+  });
+  document.querySelectorAll("[data-task-plan]").forEach(c=>c.onchange=async()=>{
+    let p=plans.find(x=>x.id===c.dataset.taskPlan),idx=+c.dataset.index,done=[...(p.doneTasks||[])];
+    if(c.checked&&!done.includes(idx))done.push(idx);
+    if(!c.checked)done=done.filter(x=>x!==idx);
+    await updateDoc(doc(db,"users",user.uid,"recordnote_plans",p.id),{doneTasks:done,updatedAt:serverTimestamp()});
+    await loadPlans();
+  });
+}
 $("saveDaily").onclick=async()=>{await setDoc(doc(db,"users",user.uid,"recordnote_daily",dayKey()),{date:dayKey(),reflect:$("reflect").value.trim(),thanks:$("thanks").value.trim(),tomorrow:$("tomorrow").value.trim(),updatedAt:serverTimestamp()},{merge:true});toast("하루정리를 저장했어요");renderStats()};
 async function loadDaily(){let s=await getDoc(doc(db,"users",user.uid,"recordnote_daily",dayKey()));if(s.exists()){let d=s.data();$("reflect").value=d.reflect||"";$("thanks").value=d.thanks||"";$("tomorrow").value=d.tomorrow||""}renderStats()}
 async function renderStats(){if(!user)return;let mk=monthKey();$("statR").textContent=records.filter(r=>{let d=when(r);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;$("statP").textContent=plans.filter(p=>{let d=when(p);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;let ds=await getDocs(collection(db,"users",user.uid,"recordnote_daily"));$("statD").textContent=ds.docs.filter(d=>(d.data().date||"").startsWith(mk)).length}
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan")renderPlans();if(b.dataset.tab==="Browse")renderAll();if(b.dataset.tab==="Daily")renderStats()});
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan"){renderPlans();renderPlanOverview();}if(b.dataset.tab==="Browse")renderAll();if(b.dataset.tab==="Daily")renderStats()});
 if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script></body></html>
