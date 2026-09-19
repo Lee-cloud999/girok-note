@@ -1,0 +1,9 @@
+{
+  "name": "기록노트",
+  "short_name": "기록노트",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8f6ff",
+  "theme_color": "#f8f6ff",
+  "lang": "ko"
+}

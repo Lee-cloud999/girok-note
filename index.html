@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f8f6ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="기록노트">
+<link rel="manifest" href="manifest.webmanifest">
+<title>기록노트</title>
+<style>
+:root{--bg:#f8f6ff;--white:#fff;--ink:#40394f;--muted:#8d84a3;--lav1:#f1ebff;--lav2:#e5d9ff;--lav3:#cbb8f3;--line:#e9e2f5;--danger:#f9e6ec}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(#fcfbff,#f8f6ff);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+main{max-width:820px;margin:auto;padding:18px 16px 105px}.card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:18px;margin:12px 0;box-shadow:0 8px 24px rgba(105,83,146,.08)}
+h1{font-size:28px;margin:4px 0 8px}h2{font-size:19px;margin:0 0 8px}.muted,.tiny{color:var(--muted)}.tiny{font-size:12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}.brand{font-size:23px;font-weight:900}
+input,textarea,select{width:100%;font:inherit;border:1px solid var(--line);border-radius:15px;padding:13px;background:#fff;color:var(--ink)}textarea{min-height:105px;resize:vertical;line-height:1.55}
+button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14px;background:var(--lav2);color:var(--ink)}button.primary{background:var(--lav3)}button.secondary{background:#f4f1f8}button.danger{background:var(--danger)}button.small{font-size:13px;padding:8px 10px}
+.hidden{display:none!important}.row{display:flex;gap:9px}.row>*{flex:1}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-size:13px}.chip.on{background:var(--lav2);border-color:var(--lav3)}
+.record,.planCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0}.planCard{border-left:5px solid var(--lav3)}.recordTitle{font-weight:850}.recordBody{white-space:pre-wrap;line-height:1.6;margin-top:8px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.badge{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 9px;border-radius:999px;background:var(--lav1);font-size:12px;font-weight:800}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.planTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.planTabs button{background:#fff;border:1px solid var(--line);font-size:13px}.planTabs button.active{background:var(--lav2)}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:7px 8px calc(7px + env(safe-area-inset-bottom));z-index:20}.bottomnav button{background:transparent;font-size:12px;padding:8px 4px}.bottomnav button.active{background:var(--lav1)}
+.auth{max-width:470px;margin:48px auto}.hero{width:72px;height:72px;border-radius:24px;background:var(--lav2);display:grid;place-items:center;margin:0 auto 12px;font-size:34px}.center{text-align:center}
+.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;margin-top:4px}
+#toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#514a65;color:#fff;padding:11px 15px;border-radius:999px;opacity:0;transition:.2s;z-index:50;pointer-events:none}#toast.show{opacity:1}
+@media(max-width:560px){.grid2,.searchbar{grid-template-columns:1fr}}
+</style>
+</head>
+<body><main>
+<section id="authView" class="auth">
+<div class="card">
+<div class="hero">✎</div><h1 class="center">기록노트</h1><p class="muted center">짧은 메모부터 계획, 하루정리까지 한곳에.</p>
+<input id="email" type="email" placeholder="이메일"><br><br>
+<input id="password" type="password" placeholder="비밀번호 (6자 이상)"><br><br>
+<div class="row"><button id="login" class="primary">로그인</button><button id="signup">처음 가입</button></div><p id="authMsg" class="tiny"></p>
+</div></section>
+
+<section id="appView" class="hidden">
+<div class="top"><div><div class="brand">기록노트</div><div id="sync" class="tiny">동기화 중…</div></div><button id="logout" class="secondary small">로그아웃</button></div>
+
+<section id="tabRecord">
+<div class="card" style="background:var(--lav1)"><h1>지금 떠오른 걸 적어보세요</h1>
+<textarea id="text" placeholder="무슨 생각을 하고 있나요?"></textarea>
+<div id="types" class="chips"></div>
+<input id="title" placeholder="제목 (선택)"><br><br>
+<div class="grid2"><input id="tags" placeholder="태그 (쉼표로 구분)"><button id="saveRecord" class="primary">기록 저장</button></div>
+</div>
+<div class="card"><div class="top"><h2>오늘의 기록</h2><span id="todayCount" class="tiny"></span></div><div id="todayRecords"></div></div>
+</section>
+
+<section id="tabPlan" class="hidden">
+<div class="card"><h1>계획</h1><p class="muted">연간부터 일간까지 필요한 만큼만 적어두세요.</p><div class="planTabs"><button data-plan="year" class="active">연간</button><button data-plan="month">월간</button><button data-plan="week">주간</button><button data-plan="day">일간</button></div></div>
+<div class="card"><h2 id="planHeading">연간계획</h2><input id="period" placeholder="예: 2026년"><br><br><textarea id="goal" placeholder="핵심 목표"></textarea><br><br><textarea id="tasks" placeholder="할 일을 한 줄에 하나씩 적어주세요."></textarea><br><br><textarea id="memo" placeholder="메모 (선택)"></textarea><button id="savePlan" class="primary" style="width:100%;margin-top:10px">계획 저장</button></div>
+<div id="plans"></div>
+</section>
+
+<section id="tabBrowse" class="hidden">
+<div class="card"><h1>모아보기</h1><div class="searchbar"><input id="search" placeholder="제목·내용·태그 검색"><select id="filter"><option value="">모든 유형</option></select></div></div>
+<div id="allRecords"></div>
+</section>
+
+<section id="tabDaily" class="hidden">
+<div class="card" style="background:var(--lav1)"><h1>하루정리</h1><p class="muted">오늘 하루를 가볍게 남겨두세요.</p></div>
+<div class="card"><h2>오늘의 성찰</h2><textarea id="reflect" placeholder="오늘 기억하고 싶은 일, 배운 점, 마음에 남은 것"></textarea></div>
+<div class="card"><h2>칭찬과 감사</h2><textarea id="thanks" placeholder="오늘의 나에게 해주고 싶은 칭찬이나 감사한 일"></textarea></div>
+<div class="card"><h2>내일을 위해</h2><textarea id="tomorrow" placeholder="내일 기억하고 싶은 한 가지"></textarea><button id="saveDaily" class="primary" style="width:100%;margin-top:10px">오늘의 하루정리 저장</button></div>
+<div class="card"><h2>이번 달 기록 현황</h2><div class="stats"><div class="stat"><span class="tiny">기록</span><b id="statR">0</b></div><div class="stat"><span class="tiny">계획</span><b id="statP">0</b></div><div class="stat"><span class="tiny">하루정리</span><b id="statD">0</b></div></div></div>
+</section>
+</section>
+</main>
+
+<nav id="nav" class="bottomnav hidden">
+<button data-tab="Record" class="active">✍️<br>기록</button><button data-tab="Plan">계획</button><button data-tab="Browse">🔎<br>모아보기</button><button data-tab="Daily">🌙<br>하루정리</button>
+</nav>
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,getDocs,getDoc,query,orderBy,serverTimestamp,setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+const firebaseConfig={"apiKey": "AIzaSyCOy8x5kPeJUUqRUjEHRqckT2ReULEoUac", "authDomain": "maeum-jogak2.firebaseapp.com", "projectId": "maeum-jogak2", "appId": "1:942972843404:web:8148d7610469425609d2a9"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const TYPES=["한 줄 기록","아이디어","감각·감정","지식","묘사","독서","강의"];
+const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],planKind="year";
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(t){let e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1400)}
+function showApp(ok){$("authView").classList.toggle("hidden",ok);$("appView").classList.toggle("hidden",!ok);$("nav").classList.toggle("hidden",!ok)}
+function dayKey(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function monthKey(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
+function when(x){return x.createdAt?.toDate?x.createdAt.toDate():new Date()}
+$("types").innerHTML=TYPES.map((t,i)=>`<button type="button" class="chip ${i===0?"on":""}" data-type="${t}">${t}</button>`).join("");
+$("filter").innerHTML='<option value="">모든 유형</option>'+TYPES.map(t=>`<option>${t}</option>`).join("");
+$("types").onclick=e=>{let b=e.target.closest("[data-type]");if(!b)return;selectedType=b.dataset.type;document.querySelectorAll("[data-type]").forEach(x=>x.classList.toggle("on",x.dataset.type===selectedType))};
+onAuthStateChanged(auth,async u=>{user=u;showApp(!!u);if(u){$("sync").textContent="☁️ "+u.email;await Promise.all([loadRecords(),loadPlans(),loadDaily()])}});
+$("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){$("authMsg").textContent="로그인 실패: "+e.message}};
+$("signup").onclick=async()=>{try{await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){$("authMsg").textContent="가입 실패: "+e.message}};
+$("logout").onclick=()=>signOut(auth);
+$("saveRecord").onclick=async()=>{let text=$("text").value.trim();if(!text)return alert("내용을 적어주세요.");let tags=$("tags").value.split(",").map(x=>x.trim()).filter(Boolean);await addDoc(collection(db,"users",user.uid,"recordnote_records"),{type:selectedType,title:$("title").value.trim(),text,tags,createdAt:serverTimestamp(),updatedAt:serverTimestamp()});$("text").value="";$("title").value="";$("tags").value="";toast("기록했어요");await loadRecords()};
+async function loadRecords(){let s=await getDocs(query(collection(db,"users",user.uid,"recordnote_records"),orderBy("createdAt","desc")));records=s.docs.map(d=>({id:d.id,...d.data()}));renderToday();renderAll();renderStats()}
+function card(r){return `<div class="record"><div class="top"><div><div class="recordTitle">${esc(r.title||r.type)}</div><div class="tiny">${when(r).toLocaleString("ko-KR")}</div></div><span class="badge">${esc(r.type)}</span></div><div class="recordBody">${esc(r.text)}</div>${(r.tags||[]).length?`<div class="badges">${r.tags.map(t=>`<span class="badge">#${esc(t)}</span>`).join("")}</div>`:""}<div class="actions"><button class="small danger" data-del-record="${r.id}">삭제</button></div></div>`}
+function wireDelete(){document.querySelectorAll("[data-del-record]").forEach(b=>b.onclick=async()=>{if(confirm("이 기록을 삭제할까요?")){await deleteDoc(doc(db,"users",user.uid,"recordnote_records",b.dataset.delRecord));await loadRecords()}})}
+function renderToday(){let key=dayKey(),a=records.filter(r=>{let d=when(r);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`===key});$("todayCount").textContent=`${a.length}개`;$("todayRecords").innerHTML=a.length?a.map(card).join(""):'<p class="muted">오늘의 첫 기록을 남겨보세요.</p>';wireDelete()}
+function renderAll(){let q=$("search").value.toLowerCase(),f=$("filter").value,a=records.filter(r=>(!f||r.type===f)&&(!q||((r.title||"")+" "+(r.text||"")+" "+(r.tags||[]).join(" ")).toLowerCase().includes(q)));$("allRecords").innerHTML=a.length?a.map(card).join(""):'<div class="card muted">조건에 맞는 기록이 없어요.</div>';wireDelete()}
+$("search").oninput=renderAll;$("filter").onchange=renderAll;
+const planNames={year:"연간계획",month:"월간계획",week:"주간계획",day:"일간계획"};
+document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>{planKind=b.dataset.plan;document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x===b));$("planHeading").textContent=planNames[planKind];$("period").placeholder={year:"예: 2026년",month:"예: 2026년 9월",week:"예: 9월 3주",day:"예: 9월 19일"}[planKind];renderPlans()});
+$("savePlan").onclick=async()=>{let ts=$("tasks").value.split("\n").map(x=>x.trim()).filter(Boolean),data={kind:planKind,period:$("period").value.trim(),goal:$("goal").value.trim(),tasks:ts,memo:$("memo").value.trim(),doneTasks:[],createdAt:serverTimestamp(),updatedAt:serverTimestamp()};if(!data.period&&!data.goal&&!data.tasks.length&&!data.memo)return alert("계획 내용을 적어주세요.");await addDoc(collection(db,"users",user.uid,"recordnote_plans"),data);$("period").value="";$("goal").value="";$("tasks").value="";$("memo").value="";toast("계획을 저장했어요");await loadPlans()};
+async function loadPlans(){let s=await getDocs(query(collection(db,"users",user.uid,"recordnote_plans"),orderBy("createdAt","desc")));plans=s.docs.map(d=>({id:d.id,...d.data()}));renderPlans();renderStats()}
+function renderPlans(){let a=plans.filter(p=>p.kind===planKind);$("plans").innerHTML=a.length?a.map(p=>`<div class="planCard"><div class="top"><div><b>${esc(p.period||planNames[p.kind])}</b><div class="tiny">${planNames[p.kind]}</div></div><button class="small danger" data-del-plan="${p.id}">삭제</button></div>${p.goal?`<p><b>핵심 목표</b><br>${esc(p.goal)}</p>`:""}${(p.tasks||[]).length?`<div><b>할 일</b>${p.tasks.map((t,i)=>`<label class="checkItem"><input type="checkbox" data-task-plan="${p.id}" data-index="${i}" ${(p.doneTasks||[]).includes(i)?"checked":""}><span>${esc(t)}</span></label>`).join("")}</div>`:""}${p.memo?`<p><b>메모</b><br>${esc(p.memo)}</p>`:""}</div>`).join(""):'<div class="card muted">아직 저장된 계획이 없어요.</div>';document.querySelectorAll("[data-del-plan]").forEach(b=>b.onclick=async()=>{if(confirm("이 계획을 삭제할까요?")){await deleteDoc(doc(db,"users",user.uid,"recordnote_plans",b.dataset.delPlan));await loadPlans()}});document.querySelectorAll("[data-task-plan]").forEach(c=>c.onchange=async()=>{let p=plans.find(x=>x.id===c.dataset.taskPlan),idx=+c.dataset.index,done=[...(p.doneTasks||[])];if(c.checked&&!done.includes(idx))done.push(idx);if(!c.checked)done=done.filter(x=>x!==idx);await updateDoc(doc(db,"users",user.uid,"recordnote_plans",p.id),{doneTasks:done,updatedAt:serverTimestamp()});await loadPlans()})}
+$("saveDaily").onclick=async()=>{await setDoc(doc(db,"users",user.uid,"recordnote_daily",dayKey()),{date:dayKey(),reflect:$("reflect").value.trim(),thanks:$("thanks").value.trim(),tomorrow:$("tomorrow").value.trim(),updatedAt:serverTimestamp()},{merge:true});toast("하루정리를 저장했어요");renderStats()};
+async function loadDaily(){let s=await getDoc(doc(db,"users",user.uid,"recordnote_daily",dayKey()));if(s.exists()){let d=s.data();$("reflect").value=d.reflect||"";$("thanks").value=d.thanks||"";$("tomorrow").value=d.tomorrow||""}renderStats()}
+async function renderStats(){if(!user)return;let mk=monthKey();$("statR").textContent=records.filter(r=>{let d=when(r);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;$("statP").textContent=plans.filter(p=>{let d=when(p);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;let ds=await getDocs(collection(db,"users",user.uid,"recordnote_daily"));$("statD").textContent=ds.docs.filter(d=>(d.data().date||"").startsWith(mk)).length}
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan")renderPlans();if(b.dataset.tab==="Browse")renderAll();if(b.dataset.tab==="Daily")renderStats()});
+if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script></body></html>
