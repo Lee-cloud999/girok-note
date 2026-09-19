@@ -27,21 +27,21 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .chip{background:#fff;border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-size:13px}.chip.on{background:var(--lav2);border-color:var(--lav3)}
 .record,.planCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0}.planCard{border-left:5px solid var(--lav3)}.recordTitle{font-weight:850}.recordBody{white-space:pre-wrap;line-height:1.6;margin-top:8px}
 .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.badge{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 9px;border-radius:999px;background:var(--lav1);font-size:12px;font-weight:800}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.planOverviewGrid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
-.planOverviewCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}
-.planOverviewHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.planOverviewGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.planOverviewCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;min-height:0}
+.planOverviewHead{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:6px}
 .planOverviewHead b{font-size:16px}
-.planOverviewBody{line-height:1.55}
+.planOverviewBody{line-height:1.4;font-size:13px}
 .planOverviewBody ul{margin:8px 0 0 18px;padding:0}
 .planOverviewEmpty{color:var(--muted);font-size:14px}
 .planOverviewControls{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
 .planTabs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.planTabs button{background:#fff;border:1px solid var(--line);font-size:13px}.planTabs button.active{background:var(--lav2)}
 .bottomnav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:20}.bottomnav button{background:transparent;font-size:11px;line-height:1.15;padding:7px 2px;min-width:0;white-space:nowrap}.bottomnav button.active{background:var(--lav1)}
 .dailyHero{padding:10px 16px!important;margin:8px 0 10px!important;border-radius:20px!important}.dailyHero h1{font-size:25px;margin:0 0 2px}.dailyHero p{margin:0;line-height:1.35;font-size:14px}.auth{max-width:470px;margin:48px auto}.hero{width:72px;height:72px;border-radius:24px;background:var(--lav2);display:grid;place-items:center;margin:0 auto 12px;font-size:34px}.center{text-align:center}
-.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
+.planMemoSmall{min-height:42px;height:42px}.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;margin-top:4px}
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#514a65;color:#fff;padding:11px 15px;border-radius:999px;opacity:0;transition:.2s;z-index:50;pointer-events:none}#toast.show{opacity:1}
-@media(max-width:560px){.grid2,.searchbar{grid-template-columns:1fr}#tabDaily .card{padding:14px;margin:8px 0}#tabDaily textarea{min-height:88px}.bottomnav button{font-size:10.5px;padding:6px 1px}}
+@media(max-width:560px){.grid2,.searchbar{grid-template-columns:1fr}.planOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.planOverviewCard{padding:10px;border-radius:16px}.planOverviewHead b{font-size:14px}.planOverviewHead .badge{font-size:10px;min-height:26px;padding:5px 7px}.planOverviewBody{font-size:12px}.planOverviewBody ul{margin:5px 0 0 15px}.planOverviewCard .actions button{font-size:11px;padding:7px 8px}#tabDaily .card{padding:14px;margin:8px 0}#tabDaily textarea{min-height:88px}.bottomnav button{font-size:10.5px;padding:6px 1px}}
 </style>
 </head>
 <body><main>
@@ -107,7 +107,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
   <br><br>
   <textarea id="tasks" placeholder="할 일을 한 줄에 하나씩 적어주세요."></textarea>
   <br><br>
-  <textarea id="memo" placeholder="메모 (선택)"></textarea>
+  <textarea id="memo" class="planMemoSmall" placeholder="메모 (선택)"></textarea>
   <button id="savePlan" class="primary" style="width:100%;margin-top:10px">계획 저장</button>
 </div>
 
@@ -118,13 +118,21 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 </section>
 
 <section id="tabBrowse" class="hidden">
+<div class="card">
+  <h2>이번 달 기록 현황</h2>
+  <div class="stats">
+    <div class="stat"><span class="tiny">기록</span><b id="statR">0</b></div>
+    <div class="stat"><span class="tiny">계획</span><b id="statP">0</b></div>
+    <div class="stat"><span class="tiny">하루기록</span><b id="statD">0</b></div>
+  </div>
+</div>
 <div class="card"><h1>모아보기</h1><div class="searchbar"><input id="search" placeholder="제목·내용·태그 검색"><select id="filter"><option value="">모든 유형</option></select></div></div>
 <div id="allRecords"></div>
 </section>
 
 <section id="tabDaily" class="hidden">
 <div class="card dailyHero" style="background:var(--lav1)">
-  <h1>하루정리</h1>
+  <h1>하루기록</h1>
   <p class="muted">오늘 하루에서 감사, 칭찬, 반성을 짧게 남겨보세요.</p>
 </div>
 
@@ -141,23 +149,15 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 <div class="card">
   <h2>반성</h2>
   <textarea id="reflection" placeholder="오늘 아쉬웠던 점이나 다음에는 다르게 해보고 싶은 일을 적어보세요."></textarea>
-  <button id="saveDaily" class="primary" style="width:100%;margin-top:10px">오늘의 하루정리 저장</button>
+  <button id="saveDaily" class="primary" style="width:100%;margin-top:10px">오늘의 하루기록 저장</button>
 </div>
 
-<div class="card">
-  <h2>이번 달 기록 현황</h2>
-  <div class="stats">
-    <div class="stat"><span class="tiny">기록</span><b id="statR">0</b></div>
-    <div class="stat"><span class="tiny">계획</span><b id="statP">0</b></div>
-    <div class="stat"><span class="tiny">하루정리</span><b id="statD">0</b></div>
-  </div>
-</div>
 </section>
 
 <section id="tabDailyLog" class="hidden">
 <div class="card" style="background:var(--lav1)">
-  <h1>하루기록</h1>
-  <p class="muted">캘린더에서 날짜를 골라 그날의 하루정리를 다시 볼 수 있어요.</p>
+  <h1>하루정리</h1>
+  <p class="muted">캘린더에서 날짜를 골라 그날의 하루기록을 다시 볼 수 있어요.</p>
 </div>
 
 <div class="card">
@@ -169,7 +169,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 
 <div class="card">
   <div class="top">
-    <h2>저장한 하루정리</h2>
+    <h2>저장한 하루기록</h2>
     <span id="dailyLogCount" class="tiny"></span>
   </div>
   <div id="dailyLogList"></div>
@@ -180,10 +180,10 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 
 <nav id="nav" class="bottomnav hidden">
 <button data-tab="Record" class="active">✍️<br>기록</button>
-<button data-tab="Plan">🗓️<br>계획</button>
 <button data-tab="Browse">🔎<br>모아보기</button>
-<button data-tab="Daily">🌙<br>하루정리</button>
-<button data-tab="DailyLog">📅<br>하루기록</button>
+<button data-tab="Plan">🗓️<br>계획</button>
+<button data-tab="Daily">🌙<br>하루기록</button>
+<button data-tab="DailyLog">📅<br>하루정리</button>
 </nav>
 <div id="toast"></div>
 
@@ -431,7 +431,7 @@ $("saveDaily").onclick=async()=>{
   };
   if(!data.gratitude && !data.praise && !data.reflection) return alert("하루정리 내용을 하나라도 적어주세요.");
   await setDoc(doc(db,"users",user.uid,"recordnote_daily",dayKey()),data,{merge:true});
-  toast("하루정리를 저장했어요");
+  toast("하루기록을 저장했어요");
   await loadDailyLogs();
 };
 
@@ -477,7 +477,7 @@ function renderDailyLogList(){
   $("dailyLogCount").textContent=`${dailyLogs.length}개`;
   $("dailyLogList").innerHTML=dailyLogs.length
     ? dailyLogs.map(d=>dailyLogCard(d)).join("")
-    : '<p class="muted">아직 저장한 하루정리가 없어요.</p>';
+    : '<p class="muted">아직 저장한 하루기록이 없어요.</p>';
 }
 function renderSelectedDailyLog(){
   if(!$("selectedDailyLog")) return;
@@ -485,7 +485,7 @@ function renderSelectedDailyLog(){
   const d=dailyLogs.find(x=>(x.date||x.id)===key);
   $("selectedDailyLog").innerHTML=d
     ? dailyLogCard(d)
-    : '<div class="card muted">선택한 날짜에는 저장된 하루정리가 없어요.</div>';
+    : '<div class="card muted">선택한 날짜에는 저장된 하루기록이 없어요.</div>';
 }
 $("dailyLogDate").value=dayKey();
 $("dailyLogDate").onchange=renderSelectedDailyLog;
@@ -497,6 +497,6 @@ async function renderStats(){
   $("statP").textContent=plans.filter(p=>{let d=when(p);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;
   $("statD").textContent=dailyLogs.filter(d=>(d.date||d.id||"").startsWith(mk)).length;
 }
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily","DailyLog"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan"){renderPlans();renderPlanOverview();}if(b.dataset.tab==="Browse")renderAll();if(b.dataset.tab==="Daily"){loadDailyForDate(dayKey());renderStats()}if(b.dataset.tab==="DailyLog"){renderSelectedDailyLog();renderDailyLogList()}});
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily","DailyLog"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan"){renderPlans();renderPlanOverview();}if(b.dataset.tab==="Browse"){renderAll();renderStats();}if(b.dataset.tab==="Daily"){loadDailyForDate(dayKey());renderStats()}if(b.dataset.tab==="DailyLog"){renderSelectedDailyLog();renderDailyLogList()}});
 if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script></body></html>
