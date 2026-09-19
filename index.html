@@ -43,6 +43,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .dailyHero{padding:10px 16px!important;margin:8px 0 10px!important;border-radius:20px!important}.dailyHero h1{font-size:25px;margin:0 0 2px}.dailyHero p{margin:0;line-height:1.35;font-size:14px}.auth{max-width:470px;margin:48px auto}.hero{width:72px;height:72px;border-radius:24px;background:var(--lav2);display:grid;place-items:center;margin:0 auto 12px;font-size:34px}.center{text-align:center}
 .planMemoSmall{min-height:42px;height:42px}.dateSafe{width:100%;max-width:100%;min-width:0;display:block}.dailyEditorCard{background:var(--lav1)}.dailySection{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}.dailySection h2{margin-bottom:8px}.dailySection textarea{min-height:88px}.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;margin-top:4px}
+.calendarCard{overflow:hidden}.calendarHead{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px}.calendarHead h2{text-align:center;margin:0}.calendarHead button{padding:8px 10px;min-height:40px}.calendarWeekdays,.dailyCalendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.calendarWeekdays{margin-top:14px;color:var(--muted);font-size:12px;text-align:center;font-weight:800}.dailyCalendar{margin-top:7px}.calBlank{aspect-ratio:1/1}.calDay{position:relative;aspect-ratio:1/1;min-width:0;padding:0;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:14px}.calDay.today{border-color:var(--lav3)}.calDay.selected{background:var(--lav2);border-color:var(--lav3)}.calDay.hasRecord::after{content:"";position:absolute;left:50%;bottom:6px;width:5px;height:5px;border-radius:50%;background:#7d65b3;transform:translateX(-50%)}.calendarHint{margin-top:10px;text-align:right}.dailyTime{margin-top:3px}.dailyDateLine{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#514a65;color:#fff;padding:11px 15px;border-radius:999px;opacity:0;transition:.2s;z-index:50;pointer-events:none}#toast.show{opacity:1}
 @media(max-width:560px){.grid2,.searchbar{grid-template-columns:1fr}.planOverviewControls{grid-template-columns:minmax(0,1fr) auto;gap:10px}.dailySection{padding:12px}.planOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.planOverviewCard{padding:10px;border-radius:16px}.planOverviewHead b{font-size:14px}.planOverviewHead .badge{font-size:10px;min-height:26px;padding:5px 7px}.planOverviewBody{font-size:12px}.planOverviewBody ul{margin:5px 0 0 15px}.planOverviewCard .actions button{font-size:11px;padding:7px 8px}#tabDaily .card{padding:14px;margin:8px 0}#tabDaily textarea{min-height:88px}.bottomnav button{font-size:10.5px;padding:6px 1px}}
 </style>
@@ -83,7 +84,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
       <label class="tiny">기준일</label>
       <input id="overviewDate" class="dateSafe" type="date">
     </div>
-    <button id="todayOverview" class="secondary">오늘</button>
+    <button id="todayOverview" class="primary">오늘</button>
   </div>
   <div id="planOverview" class="planOverviewGrid"></div>
 </div>
@@ -163,9 +164,17 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
   <p class="muted">캘린더에서 날짜를 골라 그날의 하루기록을 다시 볼 수 있어요.</p>
 </div>
 
-<div class="card">
-  <h2>날짜 선택</h2>
-  <input id="dailyLogDate" class="dateSafe" type="date">
+<div class="card calendarCard">
+  <div class="calendarHead">
+    <button id="calendarPrev" class="secondary small" type="button" aria-label="이전 달">‹</button>
+    <h2 id="calendarTitle">달력</h2>
+    <button id="calendarNext" class="secondary small" type="button" aria-label="다음 달">›</button>
+  </div>
+  <div class="calendarWeekdays" aria-hidden="true">
+    <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+  </div>
+  <div id="dailyCalendar" class="dailyCalendar"></div>
+  <div class="tiny calendarHint">● 기록이 있는 날짜</div>
 </div>
 
 <div id="selectedDailyLog"></div>
@@ -197,13 +206,26 @@ import { getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,getDocs,getDoc,q
 const firebaseConfig={"apiKey": "AIzaSyCOy8x5kPeJUUqRUjEHRqckT2ReULEoUac", "authDomain": "maeum-jogak2.firebaseapp.com", "projectId": "maeum-jogak2", "appId": "1:942972843404:web:8148d7610469425609d2a9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const TYPES=["한 줄 기록","아이디어","감각·감정","지식","묘사","독서","강의"];
-const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],dailyLogs=[],planKind="year";
+const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],dailyLogs=[],planKind="year",selectedDailyDate=dayKey(),calendarCursor=new Date();
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(t){let e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1400)}
 function showApp(ok){$("authView").classList.toggle("hidden",ok);$("appView").classList.toggle("hidden",!ok);$("nav").classList.toggle("hidden",!ok)}
 function dayKey(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function monthKey(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
 function when(x){return x.createdAt?.toDate?x.createdAt.toDate():new Date()}
+function dailyTimestamp(d){
+  const t=d.createdAt?.toDate?d.createdAt.toDate():(d.updatedAt?.toDate?d.updatedAt.toDate():null);
+  return t;
+}
+function dailyTimeLabel(d){
+  const t=dailyTimestamp(d);
+  return t?t.toLocaleTimeString("ko-KR",{hour:"numeric",minute:"2-digit"}):"";
+}
+function clearDailyForm(){
+  $("gratitude").value="";$("praise").value="";$("reflection").value="";
+  $("saveDaily").dataset.editDate="";$("saveDaily").textContent="오늘의 하루기록 저장";
+  $("dailyEditNotice").classList.add("hidden");$("dailyEditNotice").textContent="";
+}
 $("typeMenu").innerHTML=TYPES.map((t,i)=>`<button type="button" data-type="${t}" class="${i===0?"active":""}">${t}</button>`).join("");
 $("filter").innerHTML='<option value="">모든 유형</option>'+TYPES.map(t=>`<option>${t}</option>`).join("");
 
@@ -223,7 +245,7 @@ document.addEventListener("click",e=>{
     $("typeMenu").classList.add("hidden");
     }
 });
-onAuthStateChanged(auth,async u=>{user=u;showApp(!!u);if(u){$("sync").textContent="☁️ "+u.email;await Promise.all([loadRecords(),loadPlans(),loadDailyLogs()]); loadDailyForDate(dayKey())}});
+onAuthStateChanged(auth,async u=>{user=u;showApp(!!u);if(u){$("sync").textContent="☁️ "+u.email;await Promise.all([loadRecords(),loadPlans(),loadDailyLogs()]); clearDailyForm()}});
 $("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){$("authMsg").textContent="로그인 실패: "+e.message}};
 $("signup").onclick=async()=>{try{await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){$("authMsg").textContent="가입 실패: "+e.message}};
 $("logout").onclick=()=>signOut(auth);
@@ -451,6 +473,8 @@ function renderPlans(){
 }
 $("saveDaily").onclick=async()=>{
   const targetDate=$("saveDaily").dataset.editDate||dayKey();
+  const ref=doc(db,"users",user.uid,"recordnote_daily",targetDate);
+  const existing=await getDoc(ref);
   const data={
     date:targetDate,
     gratitude:$("gratitude").value.trim(),
@@ -458,14 +482,13 @@ $("saveDaily").onclick=async()=>{
     reflection:$("reflection").value.trim(),
     updatedAt:serverTimestamp()
   };
+  if(!existing.exists()) data.createdAt=serverTimestamp();
   if(!data.gratitude && !data.praise && !data.reflection) return alert("하루기록 내용을 하나라도 적어주세요.");
-  await setDoc(doc(db,"users",user.uid,"recordnote_daily",targetDate),data,{merge:true});
   const wasEdit=!!$("saveDaily").dataset.editDate;
-  $("saveDaily").dataset.editDate="";$("saveDaily").textContent="오늘의 하루기록 저장";
-  $("dailyEditNotice").classList.add("hidden");$("dailyEditNotice").textContent="";
+  await setDoc(ref,data,{merge:true});
+  clearDailyForm();
   toast(wasEdit?"하루기록을 수정했어요":"하루기록을 저장했어요");
   await loadDailyLogs();
-  if(wasEdit) await loadDailyForDate(dayKey());
 };
 
 function normalizeDaily(d){
@@ -494,13 +517,15 @@ async function loadDailyLogs(){
   dailyLogs=ds.docs.map(d=>normalizeDaily({id:d.id,...d.data()}))
     .sort((a,b)=>(b.date||"").localeCompare(a.date||""));
   renderDailyLogList();
+  renderCalendar();
   renderSelectedDailyLog();
   renderStats();
 }
 function dailyLogCard(d){
   const key=d.date||d.id||"";
+  const time=dailyTimeLabel(d);
   return `<div class="record">
-    <div class="recordTitle">${esc(key)}</div>
+    <div class="dailyDateLine"><div class="recordTitle">${esc(key)}</div>${time?`<div class="tiny dailyTime">${esc(time)}</div>`:""}</div>
     ${d.gratitude?`<div class="recordBody"><b>감사</b><br>${esc(d.gratitude)}</div>`:""}
     ${d.praise?`<div class="recordBody"><b>칭찬</b><br>${esc(d.praise)}</div>`:""}
     ${d.reflection?`<div class="recordBody"><b>반성</b><br>${esc(d.reflection)}</div>`:""}
@@ -538,15 +563,34 @@ function renderDailyLogList(){
 }
 function renderSelectedDailyLog(){
   if(!$("selectedDailyLog")) return;
-  const key=$("dailyLogDate").value||dayKey();
+  const key=selectedDailyDate||dayKey();
   const d=dailyLogs.find(x=>(x.date||x.id)===key);
   $("selectedDailyLog").innerHTML=d
     ? dailyLogCard(d)
     : '<div class="card muted">선택한 날짜에는 저장된 하루기록이 없어요.</div>';
   wireDailyActions();
 }
-$("dailyLogDate").value=dayKey();
-$("dailyLogDate").onchange=renderSelectedDailyLog;
+function renderCalendar(){
+  if(!$("dailyCalendar")) return;
+  const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();
+  $("calendarTitle").textContent=`${y}년 ${m+1}월`;
+  const first=new Date(y,m,1),days=new Date(y,m+1,0).getDate();
+  const today=dayKey();
+  const cells=[];
+  for(let i=0;i<first.getDay();i++) cells.push('<span class="calBlank" aria-hidden="true"></span>');
+  for(let d=1;d<=days;d++){
+    const key=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const has=dailyLogs.some(x=>(x.date||x.id)===key);
+    const cls=["calDay",key===today?"today":"",key===selectedDailyDate?"selected":"",has?"hasRecord":""].filter(Boolean).join(" ");
+    cells.push(`<button type="button" class="${cls}" data-cal-date="${key}" aria-label="${m+1}월 ${d}일${has?", 기록 있음":""}">${d}</button>`);
+  }
+  $("dailyCalendar").innerHTML=cells.join("");
+  document.querySelectorAll("[data-cal-date]").forEach(b=>b.onclick=()=>{
+    selectedDailyDate=b.dataset.calDate;renderCalendar();renderSelectedDailyLog();
+  });
+}
+$("calendarPrev").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar()};
+$("calendarNext").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar()};
 
 async function renderStats(){
   if(!user)return;
@@ -555,6 +599,6 @@ async function renderStats(){
   $("statP").textContent=plans.filter(p=>{let d=when(p);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;
   $("statD").textContent=dailyLogs.filter(d=>(d.date||d.id||"").startsWith(mk)).length;
 }
-document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily","DailyLog"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan"){renderPlans();renderPlanOverview();}if(b.dataset.tab==="Browse"){renderAll();renderStats();}if(b.dataset.tab==="Daily"){$("saveDaily").dataset.editDate="";$("saveDaily").textContent="오늘의 하루기록 저장";$("dailyEditNotice").classList.add("hidden");loadDailyForDate(dayKey());renderStats()}if(b.dataset.tab==="DailyLog"){renderSelectedDailyLog();renderDailyLogList()}});
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily","DailyLog"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan"){renderPlans();renderPlanOverview();}if(b.dataset.tab==="Browse"){renderAll();renderStats();}if(b.dataset.tab==="Daily"){clearDailyForm();renderStats()}if(b.dataset.tab==="DailyLog"){selectedDailyDate=selectedDailyDate||dayKey();calendarCursor=dateFromValue(selectedDailyDate);renderCalendar();renderSelectedDailyLog();renderDailyLogList()}});
 if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script></body></html>
