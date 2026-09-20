@@ -34,10 +34,10 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .planOverviewCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;min-height:0}
 .planOverviewHead{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:6px}
 .planOverviewHead b{font-size:16px}
-.planPeriodNav{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:6px;width:100%}
+.planPeriodNav{display:grid;grid-template-columns:26px minmax(0,1fr) 26px;align-items:center;gap:6px;width:100%}
 .planPeriodNav b{text-align:center;min-width:0}
-.planArrow{width:32px;height:32px;min-height:32px;padding:0;border-radius:999px;background:var(--lav2);font-size:24px;line-height:1;font-weight:700;display:grid;place-items:center}
-.planArrow:active{background:var(--lav3)}
+.planArrow{width:26px;height:26px;min-height:26px;padding:0;border-radius:0;background:transparent;font-size:24px;line-height:1;font-weight:800;display:grid;place-items:center;color:#6a5a8e}
+.planArrow:active{background:transparent;opacity:.75}
 .planOverviewActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
 .planAllView{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}
 .planAllViewHead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
@@ -47,16 +47,16 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .planOverviewBody{line-height:1.4;font-size:13px}
 .planOverviewBody ul{margin:8px 0 0 18px;padding:0}
 .planOverviewEmpty{color:var(--muted);font-size:14px}
-.planOverviewControls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.planOverviewControls>div{min-width:0}.planOverviewShell{background:var(--lav1)}.planOverviewControls input,.planOverviewControls button{height:44px;min-height:44px;padding-top:8px;padding-bottom:8px}.planOverviewControls input{max-width:230px}
+.planOverviewControls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.planOverviewControls>div{min-width:0}.planOverviewShell{background:var(--lav1)}.planOverviewControls input,.planOverviewControls button{height:44px;min-height:44px;padding-top:8px;padding-bottom:8px}.planOverviewControls input{max-width:230px;padding-left:14px;padding-right:14px}
 .planTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.planTabs button{background:#fff;border:1px solid var(--line);font-size:13px}.planTabs button.active{background:var(--lav2)}
 .bottomnav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:20}.bottomnav button{background:transparent;font-size:11px;line-height:1.15;padding:7px 2px;min-width:0;white-space:nowrap}.bottomnav button.active{background:var(--lav1)}
 .dailyHero{padding:10px 16px!important;margin:8px 0 10px!important;border-radius:20px!important}.dailyHero h1{font-size:25px;margin:0 0 2px}.dailyHero p{margin:0;line-height:1.35;font-size:14px}.auth{max-width:470px;margin:48px auto}.hero{width:72px;height:72px;border-radius:24px;background:var(--lav2);display:grid;place-items:center;margin:0 auto 12px;overflow:hidden}.hero img{width:100%;height:100%;object-fit:cover}.center{text-align:center}
-.planMemoSmall{min-height:42px;height:42px}.planEditorInner{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}.planEditorInner h2{margin-bottom:10px}.dateSafe{width:100%;max-width:100%;min-width:0;display:block}.planDateCompact{height:44px;min-height:44px;padding-top:8px;padding-bottom:8px}.planEditor textarea{resize:none}.recordMeta{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap}.recordMeta .tiny{text-align:left;white-space:nowrap}.recordEditBox{margin-top:12px;padding:14px;border:1px solid var(--lav3);background:var(--lav1);border-radius:16px}.recordEditBox textarea{min-height:90px;resize:none}.recordEditGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.recordEditActions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.dailyEditorCard{background:var(--lav1)}.dailySection{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}.dailySection h2{margin-bottom:8px}.dailySection textarea{min-height:88px}.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
+.planMemoSmall{min-height:42px;height:42px}.planEditorInner{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}.planEditorInner h2{margin-bottom:10px}.dateSafe{width:100%;max-width:100%;min-width:0;display:block}.planDateCompact{height:44px;min-height:44px;padding-top:8px;padding-bottom:8px}.planEditor textarea{resize:none}.dateCenter{text-align:center}.dateCenter::-webkit-date-and-time-value{text-align:center}.dateCenter::-webkit-datetime-edit{display:flex;justify-content:center;align-items:center;width:100%}.dateCenter::-webkit-calendar-picker-indicator{margin-left:auto}.planFieldsWrap{margin-top:14px}.weekPlanFields{display:grid;gap:10px}.weekField{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fcfbff}.weekField label{display:block;font-weight:800;margin-bottom:8px}.weekField .tiny{display:block;margin-top:2px}.weekField textarea{min-height:84px;resize:none}.recordMeta{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap}.recordMeta .tiny{text-align:left;white-space:nowrap}.recordEditBox{margin-top:12px;padding:14px;border:1px solid var(--lav3);background:var(--lav1);border-radius:16px}.recordEditBox textarea{min-height:90px;resize:none}.recordEditGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.recordEditActions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.dailyEditorCard{background:var(--lav1)}.dailySection{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}.dailySection h2{margin-bottom:8px}.dailySection textarea{min-height:88px}.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;margin-top:4px}
 .headerActions{display:flex;gap:7px;align-items:center}.backupPanel{margin-top:8px}.backupButtons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.pullRefresh{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:70;background:#514a65;color:#fff;padding:9px 13px;border-radius:999px;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(50,40,70,.2)}
-.calendarCard{overflow:hidden}.calendarHead{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px}.calendarHead h2{text-align:center;margin:0}.calendarHead button{padding:8px 10px;min-height:40px}.calendarWeekdays,.dailyCalendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.calendarWeekdays{margin-top:14px;color:var(--muted);font-size:12px;text-align:center;font-weight:800}.dailyCalendar{margin-top:7px}.calBlank{aspect-ratio:1/1}.calDay{position:relative;aspect-ratio:1/1;min-width:0;padding:0;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:14px}.calDay.today{border-color:var(--lav3)}.calDay.selected{background:var(--lav2);border-color:var(--lav3)}.calDay.hasRecord::after{content:"";position:absolute;left:50%;bottom:6px;width:5px;height:5px;border-radius:50%;background:#7d65b3;transform:translateX(-50%)}.calendarHint{margin-top:10px;text-align:right}.dailyTime{margin-top:3px}.dailyDateLine{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.calendarCard{overflow:hidden}.calendarInner{max-width:660px;margin:0 auto}.calendarHead{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px}.calendarHead h2{text-align:center;margin:0}.calendarHead button{padding:8px 10px;min-height:40px}.calendarWeekdays,.dailyCalendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.calendarWeekdays{margin-top:14px;color:var(--muted);font-size:12px;text-align:center;font-weight:800}.dailyCalendar{margin-top:7px}.calBlank{aspect-ratio:1/1}.calDay{position:relative;aspect-ratio:1/1;min-width:0;padding:0;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:14px}.calDay.today{border-color:var(--lav3)}.calDay.selected{background:var(--lav2);border-color:var(--lav3)}.calDay.hasRecord::after{content:"";position:absolute;left:50%;bottom:6px;width:5px;height:5px;border-radius:50%;background:#7d65b3;transform:translateX(-50%)}.calendarHint{margin-top:10px;text-align:right}.dailyTime{margin-top:3px}.dailyDateLine{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#514a65;color:#fff;padding:11px 15px;border-radius:999px;opacity:0;transition:.2s;z-index:50;pointer-events:none}#toast.show{opacity:1}
-@media(min-width:700px){#tabDailyLog .calendarCard{max-width:660px;margin-left:auto;margin-right:auto}}
+@media(min-width:700px){#tabDailyLog .calendarCard{padding-left:26px;padding-right:26px}}
 @media(max-width:560px){.grid2,.searchbar{grid-template-columns:1fr}.planOverviewControls{grid-template-columns:minmax(0,1fr) auto;gap:10px}.dailySection{padding:12px}.planOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.planOverviewCard{padding:10px;border-radius:16px}.planOverviewHead b{font-size:14px}.planOverviewHead .badge{font-size:10px;min-height:26px;padding:5px 7px}.planOverviewBody{font-size:12px}.planOverviewBody ul{margin:5px 0 0 15px}.planOverviewCard .actions button{font-size:11px;padding:7px 8px}#tabDaily .card{padding:14px;margin:8px 0}#tabDaily textarea{min-height:88px}.bottomnav button{font-size:10.5px;padding:6px 1px}}
 </style>
 </head>
@@ -103,7 +103,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
   <div class="planOverviewControls">
     <div>
       <label class="tiny">기준일</label>
-      <input id="overviewDate" class="dateSafe" type="date">
+      <input id="overviewDate" class="dateSafe planDateCompact dateCenter" type="date">
     </div>
     <button id="todayOverview" class="primary">오늘</button>
   </div>
@@ -123,15 +123,17 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
   <div class="planEditorInner">
     <h2 id="planHeading">연간계획</h2>
     <label class="tiny">이 계획의 기준 날짜</label>
-    <input id="planBaseDate" class="dateSafe planDateCompact" type="date">
+    <input id="planBaseDate" class="dateSafe planDateCompact dateCenter" type="date">
     <br>
     <input id="period" readonly>
-    <br><br>
-    <textarea id="goal" placeholder="핵심 목표"></textarea>
-    <br><br>
-    <textarea id="tasks" placeholder="할 일을 한 줄에 하나씩 적어주세요."></textarea>
-    <br><br>
-    <textarea id="memo" class="planMemoSmall" placeholder="메모 (선택)"></textarea>
+    <div id="generalPlanFields" class="planFieldsWrap">
+      <textarea id="goal" placeholder="핵심 목표"></textarea>
+      <br><br>
+      <textarea id="tasks" placeholder="할 일을 한 줄에 하나씩 적어주세요."></textarea>
+      <br><br>
+      <textarea id="memo" class="planMemoSmall" placeholder="메모 (선택)"></textarea>
+    </div>
+    <div id="weekPlanFields" class="planFieldsWrap weekPlanFields hidden"></div>
     <button id="savePlan" class="primary" style="width:100%;margin-top:10px">계획 저장</button>
   </div>
 </div>
@@ -186,16 +188,18 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 </div>
 
 <div class="card calendarCard">
-  <div class="calendarHead">
-    <button id="calendarPrev" class="secondary small" type="button" aria-label="이전 달">‹</button>
-    <h2 id="calendarTitle">달력</h2>
-    <button id="calendarNext" class="secondary small" type="button" aria-label="다음 달">›</button>
+  <div class="calendarInner">
+    <div class="calendarHead">
+      <button id="calendarPrev" class="secondary small" type="button" aria-label="이전 달">‹</button>
+      <h2 id="calendarTitle">달력</h2>
+      <button id="calendarNext" class="secondary small" type="button" aria-label="다음 달">›</button>
+    </div>
+    <div class="calendarWeekdays" aria-hidden="true">
+      <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
+    </div>
+    <div id="dailyCalendar" class="dailyCalendar"></div>
+    <div class="tiny calendarHint">● 기록이 있는 날짜</div>
   </div>
-  <div class="calendarWeekdays" aria-hidden="true">
-    <span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span>
-  </div>
-  <div id="dailyCalendar" class="dailyCalendar"></div>
-  <div class="tiny calendarHint">● 기록이 있는 날짜</div>
 </div>
 
 <div id="selectedDailyLog"></div>
@@ -227,7 +231,7 @@ import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEma
 import { getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,getDocs,getDoc,query,orderBy,serverTimestamp,setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 const firebaseConfig={"apiKey": "AIzaSyCOy8x5kPeJUUqRUjEHRqckT2ReULEoUac", "authDomain": "maeum-jogak2.firebaseapp.com", "projectId": "maeum-jogak2", "appId": "1:942972843404:web:8148d7610469425609d2a9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const TYPES=["한 줄 기록","아이디어","어플","감정","지식","독서","필사","강의"];
+const TYPES=["한 줄 기록","💬 아이디어","💻 개발노트","💜 감정","🗒️ 지식 메모","📚 독서와 필사","🎓 강의 메모"];
 const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],dailyLogs=[],planKind="year",selectedDailyDate=dayKey(),calendarCursor=new Date();
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(t){let e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1400)}
@@ -272,7 +276,7 @@ $("typeSelectBtn").onclick=()=>{
 $("typeMenu").onclick=e=>{
   let b=e.target.closest("[data-type]");
   if(!b)return;
-  selectedType=b.dataset.type;
+  selectedType=normalizeType(b.dataset.type);
   $("typeSelectLabel").textContent=selectedType;
   document.querySelectorAll("#typeMenu [data-type]").forEach(x=>x.classList.toggle("active",x.dataset.type===selectedType));
   $("typeMenu").classList.add("hidden");
@@ -291,7 +295,7 @@ $("saveRecord").onclick=async()=>{
   if(!text)return alert("내용을 적어주세요.");
   let tags=$("tags").value.split(",").map(x=>x.trim()).filter(Boolean);
   const editId=$("saveRecord").dataset.editId;
-  const data={type:selectedType,title:$("title").value.trim(),text,tags,updatedAt:serverTimestamp()};
+  const data={type:normalizeType(selectedType),title:$("title").value.trim(),text,tags,updatedAt:serverTimestamp()};
   if(editId){
     await updateDoc(doc(db,"users",user.uid,"recordnote_records",editId),data);
   }else{
@@ -303,7 +307,34 @@ $("saveRecord").onclick=async()=>{
   await loadRecords();
 };
 async function loadRecords(){let s=await getDocs(query(collection(db,"users",user.uid,"recordnote_records"),orderBy("createdAt","desc")));records=s.docs.map(d=>({id:d.id,...d.data()}));renderToday();renderAll();renderStats()}
-function displayType(type){return type==="어플 아이디어"?"어플":type==="감각·감정"?"감정":type}
+function normalizeType(type){
+  const raw=String(type||"").trim();
+  const map={
+    "아이디어":"💬 아이디어",
+    "💬 아이디어":"💬 아이디어",
+    "어플 아이디어":"💻 개발노트",
+    "어플":"💻 개발노트",
+    "개발노트":"💻 개발노트",
+    "💻 개발노트":"💻 개발노트",
+    "감각·감정":"💜 감정",
+    "감정 기록":"💜 감정",
+    "감정":"💜 감정",
+    "💜 감정":"💜 감정",
+    "지식":"🗒️ 지식 메모",
+    "지식 메모":"🗒️ 지식 메모",
+    "🗒️ 지식 메모":"🗒️ 지식 메모",
+    "독서":"📚 독서와 필사",
+    "필사":"📚 독서와 필사",
+    "독서와 필사":"📚 독서와 필사",
+    "📚 독서와 필사":"📚 독서와 필사",
+    "강의":"🎓 강의 메모",
+    "강의 메모":"🎓 강의 메모",
+    "🎓 강의 메모":"🎓 강의 메모",
+    "한 줄 기록":"한 줄 기록"
+  };
+  return map[raw]||raw||TYPES[0];
+}
+function displayType(type){return normalizeType(type)}
 function recordDateLabel(r,mode){
   const d=when(r);
   return mode==="today"
@@ -344,7 +375,7 @@ function wireRecordActions(){
     const id=b.dataset.saveEdit;
     const text=document.querySelector(`[data-edit-text="${id}"]`).value.trim();
     if(!text)return alert("내용을 적어주세요.");
-    const type=document.querySelector(`[data-edit-type="${id}"]`).value;
+    const type=normalizeType(document.querySelector(`[data-edit-type="${id}"]`).value);
     const title=document.querySelector(`[data-edit-title="${id}"]`).value.trim();
     const tags=document.querySelector(`[data-edit-tags="${id}"]`).value.split(",").map(x=>x.trim()).filter(Boolean);
     await updateDoc(doc(db,"users",user.uid,"recordnote_records",id),{type,title,text,tags,updatedAt:serverTimestamp()});
@@ -352,7 +383,7 @@ function wireRecordActions(){
   });
 }
 function renderToday(){let key=dayKey(),a=records.filter(r=>{let d=when(r);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`===key});$("todayCount").textContent=`${a.length}개`;$("todayRecords").innerHTML=a.length?a.map(r=>card(r,"today")).join(""):'<p class="muted">오늘의 첫 기록을 남겨보세요.</p>';wireRecordActions()}
-function renderAll(){let q=$("search").value.toLowerCase(),f=$("filter").value,a=records.filter(r=>(!f||r.type===f)&&(!q||((r.title||"")+" "+(r.text||"")+" "+(r.tags||[]).join(" ")).toLowerCase().includes(q)));$("allRecords").innerHTML=a.length?a.map(r=>card(r,"browse")).join(""):'<div class="card muted">조건에 맞는 기록이 없어요.</div>';wireRecordActions()}
+function renderAll(){let q=$("search").value.toLowerCase(),f=$("filter").value,a=records.filter(r=>(!f||normalizeType(r.type)===f)&&(!q||((r.title||"")+" "+(r.text||"")+" "+(r.tags||[]).join(" ")).toLowerCase().includes(q)));$("allRecords").innerHTML=a.length?a.map(r=>card(r,"browse")).join(""):'<div class="card muted">조건에 맞는 기록이 없어요.</div>';wireRecordActions()}
 $("search").oninput=renderAll;$("filter").onchange=renderAll;
 const planNames={year:"연간계획",month:"월간계획",week:"주간계획",day:"일간계획"};
 
@@ -393,12 +424,70 @@ function planLabel(kind,date){
     ? `${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getDate()}일`
     : `${a.getMonth()+1}월 ${a.getDate()}일 ~ ${b.getMonth()+1}월 ${b.getDate()}일`;
 }
+function monthPeriodKey(date){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
+}
+function weekOfMonthIndex(date){
+  const firstMonthDay=new Date(date.getFullYear(),date.getMonth(),1);
+  const firstWeekStart=mondayOf(firstMonthDay);
+  const currentWeekStart=mondayOf(date);
+  return Math.floor((currentWeekStart-firstWeekStart)/604800000)+1;
+}
+function weekSlotRangeLabel(date,index){
+  const firstMonthDay=new Date(date.getFullYear(),date.getMonth(),1);
+  const firstWeekStart=mondayOf(firstMonthDay);
+  const start=new Date(firstWeekStart);
+  start.setDate(firstWeekStart.getDate()+((index-1)*7));
+  const end=new Date(start);
+  end.setDate(start.getDate()+6);
+  return `${index}주 (${start.getMonth()+1}/${start.getDate()} ~ ${end.getMonth()+1}/${end.getDate()})`;
+}
+function normalizeWeekItems(items){
+  const arr=Array.isArray(items)?items.map(v=>String(v??"")) : [];
+  while(arr.length<6)arr.push("");
+  return arr.slice(0,6);
+}
+function planForOverview(kind,date){
+  if(kind==="week") return plans.find(p=>p.kind==="week" && (p.periodKey||"")===monthPeriodKey(date)) || null;
+  return plans.find(p=>p.kind===kind && (p.periodKey||"")===planKey(kind,date)) || null;
+}
+function planDisplayPeriod(kind,date,plan){
+  if(kind==="week") return weekSlotRangeLabel(date,weekOfMonthIndex(date));
+  return plan?.period||planLabel(kind,date);
+}
+function weeklySlotText(plan,date){
+  const idx=weekOfMonthIndex(date)-1;
+  return normalizeWeekItems(plan?.weekItems)[idx]||"";
+}
+function renderWeekPlanFields(date,values=[]){
+  const target=date||dateFromValue($("planBaseDate").value||localDateValue());
+  const items=normalizeWeekItems(values);
+  $("weekPlanFields").innerHTML=Array.from({length:6},(_,i)=>{
+    const index=i+1;
+    return `<div class="weekField"><label for="weekItem${index}">${index}주 <span class="tiny">${weekSlotRangeLabel(target,index)}</span></label><textarea id="weekItem${index}" data-week-item="${index}" placeholder="${index}주 계획을 적어주세요.">${esc(items[i])}</textarea></div>`;
+  }).join("");
+}
+function getWeekPlanValues(){
+  return Array.from(document.querySelectorAll("[data-week-item]")).map(el=>el.value.trim());
+}
+function clearPlanForm(){
+  $("goal").value="";$("tasks").value="";$("memo").value="";
+  renderWeekPlanFields(dateFromValue($("planBaseDate").value||localDateValue()));
+}
+function refreshPlanEditorVisibility(){
+  const isWeek=planKind==="week";
+  $("generalPlanFields").classList.toggle("hidden",isWeek);
+  $("weekPlanFields").classList.toggle("hidden",!isWeek);
+  if(isWeek)renderWeekPlanFields(dateFromValue($("planBaseDate").value||localDateValue()),getWeekPlanValues());
+}
 function syncPlanPeriod(){
   const v=$("planBaseDate").value||localDateValue();
   const d=dateFromValue(v);
-  $("period").value=planLabel(planKind,d);
+  $("period").value=planKind==="week" ? `${d.getFullYear()}년 ${d.getMonth()+1}월` : planLabel(planKind,d);
+  refreshPlanEditorVisibility();
 }
 function latestPlan(kind,key){
+  if(kind==="week") return plans.find(p=>p.kind==="week" && (p.periodKey||"")===key) || null;
   return plans.find(p=>p.kind===kind && (p.periodKey||"")===key) || null;
 }
 const planCursorDates={year:null,month:null,week:null,day:null};
@@ -414,11 +503,27 @@ function shiftPlanCursor(kind,amount){
   planCursorDates[kind]=d;
 }
 function planOverviewCard(kind,date){
-  const key=planKey(kind,date),p=latestPlan(kind,key);
-  const period=esc(p?.period||planLabel(kind,date));
+  const p=planForOverview(kind,date);
+  const period=esc(planDisplayPeriod(kind,date,p));
   const mainButton=p
-    ? `<button class="small" data-overview-edit="${p.id}" data-kind="${kind}">수정하기</button>`
-    : `<button class="small" data-overview-add="${kind}">이 계획 작성하기</button>`;
+    ? `<button class="small" data-overview-edit="${p.id}" data-kind="${kind}">수정</button>`
+    : `<button class="small" data-overview-add="${kind}">작성</button>`;
+  let body="";
+  if(kind==="week"){
+    const slotIndex=weekOfMonthIndex(date);
+    const slotText=weeklySlotText(p,date);
+    body=slotText
+      ? `<div class="planOverviewBody"><div><b>${slotIndex}주 계획</b><br>${esc(slotText)}</div></div>`
+      : `<div class="planOverviewEmpty">아직 저장된 계획이 없어요.</div>`;
+  }else if(p){
+    body=`<div class="planOverviewBody">
+      ${p.goal?`<div><b>핵심 목표</b><br>${esc(p.goal)}</div>`:""}
+      ${(p.tasks||[]).length?`<div style="margin-top:9px"><b>할 일</b><ul>${p.tasks.map((t,i)=>`<li>${(p.doneTasks||[]).includes(i)?"✓ ":""}${esc(t)}</li>`).join("")}</ul></div>`:""}
+      ${p.memo?`<div style="margin-top:9px"><b>메모</b><br>${esc(p.memo)}</div>`:""}
+    </div>`;
+  }else{
+    body=`<div class="planOverviewEmpty">아직 저장된 계획이 없어요.</div>`;
+  }
   return `<div class="planOverviewCard">
     <div class="planOverviewHead">
       <div class="planPeriodNav">
@@ -428,11 +533,7 @@ function planOverviewCard(kind,date){
       </div>
       <span class="badge">${period}</span>
     </div>
-    ${p?`<div class="planOverviewBody">
-      ${p.goal?`<div><b>핵심 목표</b><br>${esc(p.goal)}</div>`:""}
-      ${(p.tasks||[]).length?`<div style="margin-top:9px"><b>할 일</b><ul>${p.tasks.map((t,i)=>`<li>${(p.doneTasks||[]).includes(i)?"✓ ":""}${esc(t)}</li>`).join("")}</ul></div>`:""}
-      ${p.memo?`<div style="margin-top:9px"><b>메모</b><br>${esc(p.memo)}</div>`:""}
-    </div>`:`<div class="planOverviewEmpty">아직 저장된 계획이 없어요.</div>`}
+    ${body}
     <div class="planOverviewActions">${mainButton}<button class="small secondary" data-plan-all="${kind}">전체보기</button></div>
   </div>`;
 }
@@ -445,13 +546,19 @@ function renderPlanAllView(kind){
   const box=$("planAllView");
   const items=plans.filter(p=>p.kind===kind).sort((a,b)=>planSortValue(a).localeCompare(planSortValue(b)));
   box.classList.remove("hidden");
-  box.innerHTML=`<div class="planAllViewHead"><div><h2 style="margin:0">${planNames[kind]} 전체보기</h2><div class="tiny">과거부터 미래까지 저장된 계획을 순서대로 보여줘요.</div></div><button class="small secondary" id="closePlanAll" type="button">닫기</button></div>
-    <div class="planAllList">${items.length?items.map(p=>`<div class="planAllItem">
+  const content=items.length?items.map(p=>{
+    if(kind==="week"){
+      const weeks=normalizeWeekItems(p.weekItems).map((txt,i)=>`<div style="margin-top:7px"><b>${i+1}주</b><br>${txt?esc(txt):"<span class=\"muted\">비어 있어요.</span>"}</div>`).join("");
+      return `<div class="planAllItem"><div class="periodTitle">${esc(p.period||p.periodKey||planNames[kind])}</div>${weeks}</div>`;
+    }
+    return `<div class="planAllItem">
       <div class="periodTitle">${esc(p.period||p.periodKey||planNames[kind])}</div>
       ${p.goal?`<div><b>핵심 목표</b><br>${esc(p.goal)}</div>`:""}
       ${(p.tasks||[]).length?`<div style="margin-top:7px"><b>할 일</b><ul>${p.tasks.map((t,i)=>`<li>${(p.doneTasks||[]).includes(i)?"✓ ":""}${esc(t)}</li>`).join("")}</ul></div>`:""}
       ${p.memo?`<div style="margin-top:7px"><b>메모</b><br>${esc(p.memo)}</div>`:""}
-    </div>`).join(""):`<div class="muted">저장된 ${planNames[kind]}이 아직 없어요.</div>`}</div>`;
+    </div>`;
+  }).join(""):`<div class="muted">저장된 ${planNames[kind]}이 아직 없어요.</div>`;
+  box.innerHTML=`<div class="planAllViewHead"><div><h2 style="margin:0">${planNames[kind]} 전체보기</h2><div class="tiny">과거부터 미래까지 저장된 계획을 순서대로 보여줘요.</div></div><button class="small secondary" id="closePlanAll" type="button">닫기</button></div><div class="planAllList">${content}</div>`;
   $("closePlanAll").onclick=()=>box.classList.add("hidden");
   box.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
@@ -473,9 +580,9 @@ function renderPlanOverview(){
     document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x.dataset.plan===planKind));
     $("planHeading").textContent=planNames[planKind];
     $("planBaseDate").value=localDateValue(planCursorDates[planKind]||base);
-    syncPlanPeriod();
-    $("goal").value="";$("tasks").value="";$("memo").value="";
     $("savePlan").dataset.editId="";
+    clearPlanForm();
+    syncPlanPeriod();
     window.scrollTo({top:$("planHeading").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});
   });
   document.querySelectorAll("[data-overview-edit]").forEach(b=>b.onclick=()=>{
@@ -484,11 +591,16 @@ function renderPlanOverview(){
     document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x.dataset.plan===planKind));
     $("planHeading").textContent=planNames[planKind];
     $("planBaseDate").value=p.baseDate||localDateValue(planCursorDates[planKind]||base);
-    syncPlanPeriod();
-    $("goal").value=p.goal||"";
-    $("tasks").value=(p.tasks||[]).join("\n");
-    $("memo").value=p.memo||"";
     $("savePlan").dataset.editId=p.id;
+    if(planKind==="week"){
+      renderWeekPlanFields(dateFromValue($("planBaseDate").value||localDateValue()),normalizeWeekItems(p.weekItems));
+      $("goal").value="";$("tasks").value="";$("memo").value="";
+    }else{
+      $("goal").value=p.goal||"";
+      $("tasks").value=(p.tasks||[]).join("\n");
+      $("memo").value=p.memo||"";
+    }
+    syncPlanPeriod();
     window.scrollTo({top:$("planHeading").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});
   });
 }
@@ -496,6 +608,7 @@ function renderPlanOverview(){
 $("overviewDate").value=localDateValue();
 resetPlanCursors(dateFromValue(localDateValue()));
 $("planBaseDate").value=localDateValue();
+renderWeekPlanFields(dateFromValue(localDateValue()));
 syncPlanPeriod();
 
 $("overviewDate").onchange=()=>{resetPlanCursors(dateFromValue($("overviewDate").value||localDateValue()));$("planAllView").classList.add("hidden");renderPlanOverview()};
@@ -507,44 +620,38 @@ document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("[data-plan]").forEach(x=>x.classList.toggle("active",x===b));
   $("planHeading").textContent=planNames[planKind];
   $("planBaseDate").value=$("overviewDate").value||localDateValue();
-  syncPlanPeriod();
-  $("goal").value="";$("tasks").value="";$("memo").value="";
   $("savePlan").dataset.editId="";
+  clearPlanForm();
+  syncPlanPeriod();
   renderPlans();
 });
 
 $("savePlan").onclick=async()=>{
   const baseValue=$("planBaseDate").value||localDateValue();
   const baseDate=dateFromValue(baseValue);
-  const ts=$("tasks").value.split("\n").map(x=>x.trim()).filter(Boolean);
-  const data={
-    kind:planKind,
-    period:$("period").value,
-    periodKey:planKey(planKind,baseDate),
-    baseDate:baseValue,
-    goal:$("goal").value.trim(),
-    tasks:ts,
-    memo:$("memo").value.trim(),
-    updatedAt:serverTimestamp()
-  };
-  if(!data.goal&&!data.tasks.length&&!data.memo)return alert("계획 내용을 적어주세요.");
-
   const editId=$("savePlan").dataset.editId;
+  let data={kind:planKind,updatedAt:serverTimestamp(),baseDate:baseValue};
+
+  if(planKind==="week"){
+    const weekItems=getWeekPlanValues();
+    if(weekItems.every(v=>!v))return alert("주간 계획 내용을 적어주세요.");
+    data={...data,period:`${baseDate.getFullYear()}년 ${baseDate.getMonth()+1}월`,periodKey:monthPeriodKey(baseDate),weekItems:normalizeWeekItems(weekItems)};
+  }else{
+    const ts=$("tasks").value.split("\n").map(x=>x.trim()).filter(Boolean);
+    data={...data,period:$("period").value,periodKey:planKey(planKind,baseDate),goal:$("goal").value.trim(),tasks:ts,memo:$("memo").value.trim()};
+    if(!data.goal&&!data.tasks.length&&!data.memo)return alert("계획 내용을 적어주세요.");
+  }
+
   const existing=editId ? plans.find(p=>p.id===editId) : latestPlan(planKind,data.periodKey);
 
   if(existing){
-    await updateDoc(doc(db,"users",user.uid,"recordnote_plans",existing.id),{
-      ...data,
-      doneTasks:(existing.doneTasks||[]).filter(i=>i<ts.length)
-    });
+    const payload={...data};
+    if(planKind!=="week")payload.doneTasks=(existing.doneTasks||[]).filter(i=>i<(data.tasks||[]).length);
+    await updateDoc(doc(db,"users",user.uid,"recordnote_plans",existing.id),payload);
   }else{
-    await addDoc(collection(db,"users",user.uid,"recordnote_plans"),{
-      ...data,
-      doneTasks:[],
-      createdAt:serverTimestamp()
-    });
+    await addDoc(collection(db,"users",user.uid,"recordnote_plans"),{...data,doneTasks:planKind==="week"?[]:[],createdAt:serverTimestamp()});
   }
-  $("goal").value="";$("tasks").value="";$("memo").value="";
+  clearPlanForm();
   $("savePlan").dataset.editId="";
   toast("계획을 저장했어요");
   await loadPlans();
@@ -557,13 +664,23 @@ async function loadPlans(){
 }
 function renderPlans(){
   let a=plans.filter(p=>p.kind===planKind);
-  $("plans").innerHTML=a.length?a.map(p=>`<div class="planCard">
-    <div class="top"><div><b>${esc(p.period||planNames[p.kind])}</b><div class="tiny">${planNames[p.kind]}</div></div><button class="small danger" data-del-plan="${p.id}">삭제</button></div>
-    ${p.goal?`<p><b>핵심 목표</b><br>${esc(p.goal)}</p>`:""}
-    ${(p.tasks||[]).length?`<div><b>할 일</b>${p.tasks.map((t,i)=>`<label class="checkItem"><input type="checkbox" data-task-plan="${p.id}" data-index="${i}" ${(p.doneTasks||[]).includes(i)?"checked":""}><span>${esc(t)}</span></label>`).join("")}</div>`:""}
-    ${p.memo?`<p><b>메모</b><br>${esc(p.memo)}</p>`:""}
-    <div class="actions"><button class="small" data-edit-plan="${p.id}">수정</button></div>
-  </div>`).join(""):'<div class="muted">아직 저장된 계획이 없어요.</div>';
+  $("plans").innerHTML=a.length?a.map(p=>{
+    if(p.kind==="week"){
+      const weekHtml=normalizeWeekItems(p.weekItems).map((txt,i)=>`<div style="margin-top:${i?8:0}px"><b>${i+1}주</b><br>${txt?esc(txt):"<span class=\"muted\">비어 있어요.</span>"}</div>`).join("");
+      return `<div class="planCard">
+        <div class="top"><div><b>${esc(p.period||planNames[p.kind])}</b><div class="tiny">${planNames[p.kind]}</div></div><button class="small danger" data-del-plan="${p.id}">삭제</button></div>
+        ${weekHtml}
+        <div class="actions"><button class="small" data-edit-plan="${p.id}">수정</button></div>
+      </div>`;
+    }
+    return `<div class="planCard">
+      <div class="top"><div><b>${esc(p.period||planNames[p.kind])}</b><div class="tiny">${planNames[p.kind]}</div></div><button class="small danger" data-del-plan="${p.id}">삭제</button></div>
+      ${p.goal?`<p><b>핵심 목표</b><br>${esc(p.goal)}</p>`:""}
+      ${(p.tasks||[]).length?`<div><b>할 일</b>${p.tasks.map((t,i)=>`<label class="checkItem"><input type="checkbox" data-task-plan="${p.id}" data-index="${i}" ${(p.doneTasks||[]).includes(i)?"checked":""}><span>${esc(t)}</span></label>`).join("")}</div>`:""}
+      ${p.memo?`<p><b>메모</b><br>${esc(p.memo)}</p>`:""}
+      <div class="actions"><button class="small" data-edit-plan="${p.id}">수정</button></div>
+    </div>`;
+  }).join(""):'<div class="muted">아직 저장된 계획이 없어요.</div>';
 
   document.querySelectorAll("[data-del-plan]").forEach(b=>b.onclick=async()=>{
     if(confirm("이 계획을 삭제할까요?")){
@@ -574,11 +691,16 @@ function renderPlans(){
   document.querySelectorAll("[data-edit-plan]").forEach(b=>b.onclick=()=>{
     let p=plans.find(x=>x.id===b.dataset.editPlan); if(!p)return;
     $("planBaseDate").value=p.baseDate||localDateValue();
-    syncPlanPeriod();
-    $("goal").value=p.goal||"";
-    $("tasks").value=(p.tasks||[]).join("\n");
-    $("memo").value=p.memo||"";
     $("savePlan").dataset.editId=p.id;
+    if(p.kind==="week"){
+      renderWeekPlanFields(dateFromValue($("planBaseDate").value||localDateValue()),normalizeWeekItems(p.weekItems));
+      $("goal").value="";$("tasks").value="";$("memo").value="";
+    }else{
+      $("goal").value=p.goal||"";
+      $("tasks").value=(p.tasks||[]).join("\n");
+      $("memo").value=p.memo||"";
+    }
+    syncPlanPeriod();
     window.scrollTo({top:$("planHeading").getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"});
   });
   document.querySelectorAll("[data-task-plan]").forEach(c=>c.onchange=async()=>{
