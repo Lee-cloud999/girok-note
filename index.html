@@ -861,7 +861,7 @@ function hcands(){
   });
   return a.sort((x,y)=>String(y.sortTime||y.date).localeCompare(String(x.sortTime||x.date)));
 }
-function hmeta(x){return `${hmeta(x)}${x.time?` · ${esc(x.time)}`:""}`}
+function hmeta(x){return `${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}${x.time?` · ${esc(x.time)}`:""}`}
 
 function hsel(){const k=hmk();if(!Array.isArray(state.highlightCandidates[k]))state.highlightCandidates[k]=[];return state.highlightCandidates[k]}
 function hranks(){const k=hmk();if(!Array.isArray(state.highlights[k]))state.highlights[k]=[];return state.highlights[k]}
