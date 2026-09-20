@@ -15,7 +15,7 @@ input,textarea,select{width:100%;font:inherit;border:1px solid var(--line);borde
 button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14px;background:var(--lav2);color:var(--ink)}button.primary{background:var(--lav3)}button.secondary{background:#f4f1f8}button.danger{background:var(--danger)}button.small{font-size:13px;padding:8px 10px}
 .hidden{display:none!important}.row{display:flex;gap:9px}.row>*{flex:1}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .typeSelectWrap{position:relative;margin:12px 0}.typeSelectBtn{width:100%;display:flex;align-items:center;background:#fff;border:1px solid var(--line);padding:13px 14px;border-radius:15px}
-.typeMenu{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 28px rgba(86,68,120,.14);overflow:hidden}
+.typeMenu{position:absolute;left:0;right:0;top:100%;margin-top:0;z-index:30;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 28px rgba(86,68,120,.14);overflow:hidden}
 .typeMenu button{width:100%;text-align:left;background:#fff;border-radius:0;padding:13px 15px;border-bottom:1px solid var(--line)}.typeMenu button:last-child{border-bottom:0}
 .record,.planCard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin:10px 0}.recordTitle{font-weight:850}.recordBody{white-space:pre-wrap;line-height:1.6;margin-top:8px}
 .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.badge{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 9px;border-radius:999px;background:var(--lav1);font-size:12px;font-weight:800}
@@ -223,6 +223,15 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .authBox{width:min(440px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 12px 40px #5a46601c}
 .authBox h1{margin:0 0 6px}.authBox input{width:100%;margin-top:9px}.authBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .authMsg{min-height:20px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.4}
+
+/* v13.3 integrated UI fixes */
+#planBaseDate{height:48px!important;min-height:48px!important;padding:8px 12px!important}
+#memo{overflow-y:hidden!important;scrollbar-width:none}
+#memo::-webkit-scrollbar{display:none}
+.dailyPart{position:relative;padding-right:48px}
+.dailyPart+.dailyPart{margin-top:14px}
+.dailyPartStar{position:absolute;right:0;top:0;width:40px;height:40px;min-height:40px;padding:0;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:20px}
+.dailyPartStar.on{background:var(--lav2);border-color:var(--lav3)}
 </style>
 
 <link rel="manifest" href="manifest.webmanifest">
@@ -607,18 +616,23 @@ document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>{planKind=b.da
 $("savePlan").onclick=()=>{const d=dateFrom($("planBaseDate").value),key=planKey(planKind,d);let p=state.plans.find(x=>x.kind===planKind&&x.key===key);const data={id:p?.id||id(),kind:planKind,key,period:$("period").value,baseDate:$("planBaseDate").value};if(planKind==="week"){data.weekItems=Array.from(document.querySelectorAll("[data-week]")).map(x=>x.value.trim());if(data.weekItems.every(x=>!x))return alert("주간 계획을 적어주세요.")}else{data.goal=$("goal").value.trim();data.tasks=$("tasks").value.split("\n").map(x=>x.trim()).filter(Boolean);data.memo=$("memo").value.trim();if(!data.goal&&!data.tasks.length&&!data.memo)return alert("계획을 적어주세요.")}if(p)Object.assign(p,data);else state.plans.unshift(data);saveState();renderPlans();renderOverview();renderStats();toast("계획을 저장했어요")}
 function renderPlans(){const a=state.plans.filter(p=>p.kind===planKind);$("plans").innerHTML=a.length?a.map(p=>`<div class="planCard"><b>${esc(p.period)}</b>${p.kind==="week"?p.weekItems.map((x,i)=>x?`<p><b>${i+1}주</b><br>${esc(x)}</p>`:"").join(""):`${p.goal?`<p><b>핵심 목표</b><br>${esc(p.goal)}</p>`:""}${p.tasks?.length?`<p><b>할 일</b><br>${p.tasks.map(esc).join("<br>")}</p>`:""}${p.memo?`<p><b>메모</b><br>${esc(p.memo)}</p>`:""}`}<div class="actions recordActions"><button class="small danger" data-del-plan="${p.id}">삭제</button></div></div>`).join(""):'<div class="muted">아직 저장된 계획이 없어요.</div>';document.querySelectorAll("[data-del-plan]").forEach(b=>b.onclick=()=>{state.plans=state.plans.filter(p=>p.id!==b.dataset.delPlan);saveState();renderPlans();renderOverview();renderStats()})}
 
-$("saveDaily").onclick=()=>{const k=todayKey();const prev=state.daily[k]||{};state.daily[k]={date:k,gratitude:$("gratitude").value.trim(),praise:$("praise").value.trim(),reflection:$("reflection").value.trim(),favorite:prev.favorite||false,createdAt:prev.createdAt||new Date().toISOString()};saveState();$("gratitude").value="";$("praise").value="";$("reflection").value="";renderDailyList();renderCalendar();renderSelectedDaily();renderUnifiedSearch();renderStats();toast("감칭반을 저장했어요")}
-function dailyCard(d){return `<div class="record"><div class="calendarSelectedHead"><div class="recordTitle">${esc(d.date)}</div><span class="calendarTypeBadge">🌙 감칭반</span></div>${d.gratitude?`<div class="recordBody"><b>감사</b><br>${esc(d.gratitude)}</div>`:""}${d.praise?`<div class="recordBody"><b>칭찬</b><br>${esc(d.praise)}</div>`:""}${d.reflection?`<div class="recordBody"><b>반성</b><br>${esc(d.reflection)}</div>`:""}<div class="actions recordActions"><button class="small starButton ${d.favorite?"on":""}" data-fav-daily="${esc(d.date)}">${d.favorite?"★":"☆"}</button></div></div>`}
-
+$("saveDaily").onclick=()=>{const k=todayKey();const prev=state.daily[k]||{};const pf=prev.partFavorites||{gratitude:!!prev.favorite,praise:!!prev.favorite,reflection:!!prev.favorite};state.daily[k]={date:k,gratitude:$("gratitude").value.trim(),praise:$("praise").value.trim(),reflection:$("reflection").value.trim(),favorite:prev.favorite||false,partFavorites:pf,createdAt:prev.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};saveState();$("gratitude").value="";$("praise").value="";$("reflection").value="";renderDailyList();renderCalendar();renderSelectedDaily();renderUnifiedSearch();renderStats();toast("감칭반을 저장했어요")}
+function dailyPartFavorite(d,key){return !!(d.partFavorites?.[key] ?? d.favorite)}
+function dailyCard(d){
+  const part=(key,label,text)=>text?`<div class="recordBody dailyPart"><b>${label}</b><br>${esc(text)}<button class="dailyPartStar ${dailyPartFavorite(d,key)?"on":""}" data-fav-daily-part="${esc(d.date)}" data-daily-part="${key}" aria-label="${label} 별표">${dailyPartFavorite(d,key)?"★":"☆"}</button></div>`:"";
+  return `<div class="record"><div class="calendarSelectedHead"><div class="recordTitle">${esc(d.date)}</div><span class="calendarTypeBadge">🌙 감칭반</span></div>${part("gratitude","감사",d.gratitude)}${part("praise","칭찬",d.praise)}${part("reflection","반성",d.reflection)}</div>`
+}
 function wireDailyFavorite(){
-  document.querySelectorAll("[data-fav-daily]").forEach(b=>b.onclick=()=>{
-    const d=state.daily[b.dataset.favDaily]; if(!d)return;
-    d.favorite=!d.favorite; saveState();
-    renderDailyList(); renderSelectedDaily(); renderCalendar(); renderFavorites(); renderUnifiedSearch();
-    toast(d.favorite?"보관함에 저장했어요":"보관함에서 뺐어요");
+  document.querySelectorAll("[data-fav-daily-part]").forEach(b=>b.onclick=()=>{
+    const d=state.daily[b.dataset.favDailyPart]; if(!d)return;
+    if(!d.partFavorites)d.partFavorites={gratitude:!!d.favorite,praise:!!d.favorite,reflection:!!d.favorite};
+    const key=b.dataset.dailyPart;
+    d.partFavorites[key]=!d.partFavorites[key];
+    d.favorite=Object.values(d.partFavorites).some(Boolean);
+    saveState();renderDailyList();renderSelectedDaily();renderFavorites();renderRandomFavorite();
+    toast(d.partFavorites[key]?"보관함에 저장했어요":"보관함에서 뺐어요");
   });
 }
-
 function renderDailyList(){
   if(!$("dailyLogList"))return;
   const a=Object.values(state.daily).sort((a,b)=>b.date.localeCompare(a.date));
@@ -738,7 +752,7 @@ function renderFavorites(){
     state.fourL.filter(x=>x.favorite).forEach(x=>out.push({kind:"fourl",date:x.date||"",html:fourLCard(x)}));
   }
   if(favoriteFilter==="all"||favoriteFilter==="daily"){
-    Object.values(state.daily).filter(d=>d.favorite).forEach(d=>out.push({kind:"daily",date:d.date||"",html:dailyCard(d)}));
+    Object.values(state.daily).filter(d=>["gratitude","praise","reflection"].some(k=>dailyPartFavorite(d,k))).forEach(d=>out.push({kind:"daily",date:d.createdAt||d.date||"",html:dailyCard(d)}));
   }
   out.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
   $("favoriteRecords").innerHTML=out.length?out.map(x=>x.html).join(""):'<div class="card muted">아직 별표한 기록이 없어요.</div>';
@@ -819,7 +833,7 @@ $('moodPrevMonth').onclick=()=>{moodMonthCursor=new Date(moodMonthCursor.getFull
 $('moodNextMonth').onclick=()=>{moodMonthCursor=new Date(moodMonthCursor.getFullYear(),moodMonthCursor.getMonth()+1,1);renderMoodMonth()};
 
 // v11 기억조각 - 랜덤 기록
-function favoritePool(){const a=[];state.records.filter(x=>x.favorite).forEach(x=>a.push({key:'r:'+x.id,label:x.type,date:(x.createdAt||'').slice(0,10),text:x.title?`${x.title}\n${x.text}`:x.text}));state.fourL.filter(x=>x.favorite).forEach(x=>a.push({key:'f:'+x.id,label:'🔄 4L',date:x.date,text:[x.liked&&`❤️ ${x.liked}`,x.learned&&`📘 ${x.learned}`,x.lacked&&`🪞 ${x.lacked}`,x.longed&&`🌱 ${x.longed}`].filter(Boolean).join('\n')}));Object.values(state.daily).filter(x=>x.favorite).forEach(x=>a.push({key:'d:'+x.date,label:'🌙 감칭반',date:x.date,text:[x.gratitude&&`감사 · ${x.gratitude}`,x.praise&&`칭찬 · ${x.praise}`,x.reflection&&`반성 · ${x.reflection}`].filter(Boolean).join('\n')}));return a}
+function favoritePool(){const a=[];state.records.filter(x=>x.favorite).forEach(x=>a.push({key:'r:'+x.id,label:x.type,date:(x.createdAt||'').slice(0,10),text:x.title?`${x.title}\n${x.text}`:x.text}));state.fourL.filter(x=>x.favorite).forEach(x=>a.push({key:'f:'+x.id,label:'🔄 4L',date:x.date,text:[x.liked&&`❤️ ${x.liked}`,x.learned&&`📘 ${x.learned}`,x.lacked&&`🪞 ${x.lacked}`,x.longed&&`🌱 ${x.longed}`].filter(Boolean).join('\n')}));Object.values(state.daily).forEach(x=>{[['gratitude','감사'],['praise','칭찬'],['reflection','반성']].forEach(([k,label])=>{if(x[k]&&dailyPartFavorite(x,k))a.push({key:'d:'+x.date+':'+k,label:'🌙 감칭반 ['+label+']',date:x.date,text:x[k]})})});return a}
 function showRandomItem(item){$('randomFavoriteBody').classList.remove('muted');$('randomFavoriteBody').innerHTML=item?`<div class="tiny">${esc(item.label)} · ${esc(item.date)}</div><div style="margin-top:8px">${esc(item.text)}</div>`:'<span class="muted">아직 별표한 기록이 없어요.</span>'}
 function renderRandomFavorite(){if(!$('randomFavoriteBody'))return;const pool=favoritePool();if(!pool.length){randomHistory=[];randomIndex=-1;showRandomItem(null);return}if(randomIndex>=0&&randomHistory[randomIndex]){const cur=pool.find(x=>x.key===randomHistory[randomIndex]);if(cur){showRandomItem(cur);return}}pickRandomFavorite()}
 function pickRandomFavorite(){const pool=favoritePool();if(!pool.length)return showRandomItem(null);const current=randomIndex>=0?randomHistory[randomIndex]:null;let choices=pool.filter(x=>x.key!==current);if(!choices.length)choices=pool;const item=choices[Math.floor(Math.random()*choices.length)];randomHistory=randomHistory.slice(0,randomIndex+1);randomHistory.push(item.key);randomIndex=randomHistory.length-1;showRandomItem(item)}
@@ -830,38 +844,22 @@ let highlightMode="candidates";
 if(!state.highlightCandidates)state.highlightCandidates={};if(!state.highlights)state.highlights={};
 function hmk(){return `${highlightCursor.getFullYear()}-${String(highlightCursor.getMonth()+1).padStart(2,"0")}`}
 function href(k,id){return `${k}:${id}`}
-function hFallbackIso(date,time="12:00:00"){
-  const d=new Date(`${date}T${time}`);
-  return Number.isNaN(d.getTime())?`${date}T12:00:00`:d.toISOString();
-}
-function hTimeLabel(iso){
-  if(!iso)return "";
-  const d=new Date(iso);
-  if(Number.isNaN(d.getTime()))return "";
-  return d.toLocaleTimeString("ko-KR",{hour:"numeric",minute:"2-digit"});
-}
+function hFallbackIso(date,time="12:00:00"){const d=new Date(`${date}T${time}`);return Number.isNaN(d.getTime())?`${date}T12:00:00`:d.toISOString()}
+function hTimeLabel(iso){if(!iso)return "";const d=new Date(iso);if(Number.isNaN(d.getTime()))return "";return d.toLocaleTimeString("ko-KR",{hour:"numeric",minute:"2-digit"})}
 function hcands(){
   const mk=hmk(),a=[];
-  state.records.filter(r=>String(r.createdAt||"").slice(0,7)===mk).forEach(r=>{
-    const sortTime=r.createdAt||hFallbackIso(String(r.createdAt||"").slice(0,10));
-    a.push({ref:href("r",r.id),kind:"한 줄 기록",date:String(r.createdAt).slice(0,10),sortTime,time:hTimeLabel(sortTime),text:r.text||r.title||""});
-  });
-  state.fourL.filter(x=>String(x.date||"").startsWith(mk)).forEach(x=>{
-    const sortTime=x.updatedAt||hFallbackIso(x.date);
-    a.push({ref:href("f",x.id),kind:"4L",date:x.date,sortTime,time:hTimeLabel(sortTime),text:x.liked||x.learned||x.lacked||x.longed||""});
-  });
+  state.records.filter(r=>String(r.createdAt||"").slice(0,7)===mk).forEach(r=>{const sortTime=r.createdAt||hFallbackIso(String(r.createdAt||"").slice(0,10));a.push({ref:href("r",r.id),kind:"한 줄 기록",date:String(r.createdAt).slice(0,10),sortTime,time:hTimeLabel(sortTime),text:r.text||r.title||""})});
+  state.fourL.filter(x=>String(x.date||"").startsWith(mk)).forEach(x=>{const sortTime=x.updatedAt||x.createdAt||hFallbackIso(x.date);a.push({ref:href("f",x.id),kind:"4L",date:x.date,sortTime,time:hTimeLabel(sortTime),text:x.liked||x.learned||x.lacked||x.longed||""})});
   Object.values(state.daily).filter(d=>String(d.date||"").startsWith(mk)).forEach(d=>{
-    const sortTime=d.createdAt||d.updatedAt||hFallbackIso(d.date);
-    a.push({ref:href("d",d.date),kind:"감칭반",date:d.date,sortTime,time:hTimeLabel(sortTime),text:d.gratitude||d.praise||d.reflection||""});
+    const sortTime=d.updatedAt||d.createdAt||hFallbackIso(d.date);
+    [["gratitude","감사"],["praise","칭찬"],["reflection","반성"]].forEach(([key,label])=>{
+      if(String(d[key]||"").trim())a.push({ref:href("d",`${d.date}:${key}`),kind:"감칭반",subkind:label,date:d.date,sortTime,time:hTimeLabel(sortTime),text:`[${label}] ${d[key]}`})
+    });
   });
-  Object.entries(state.monthLines||{}).filter(([d,v])=>d.startsWith(mk)&&String(v||"").trim()).forEach(([d,v])=>{
-    let sortTime=state.monthLineTimes?.[d]||"";
-    if(!sortTime)sortTime=hFallbackIso(d);
-    a.push({ref:href("m",d),kind:"하루한줄",date:d,sortTime,time:hTimeLabel(sortTime),text:v});
-  });
+  Object.entries(state.monthLines||{}).filter(([d,v])=>d.startsWith(mk)&&String(v||"").trim()).forEach(([d,v])=>{const sortTime=state.monthLineTimes?.[d]||hFallbackIso(d);a.push({ref:href("m",d),kind:"하루한줄",date:d,sortTime,time:hTimeLabel(sortTime),text:v})});
   return a.sort((x,y)=>String(y.sortTime||y.date).localeCompare(String(x.sortTime||x.date)));
 }
-function hmeta(x){return `${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}${x.time?` · ${esc(x.time)}`:""}`}
+function hmeta(x){return `${hmeta(x)}${x.time?` · ${esc(x.time)}`:""}`}
 
 function hsel(){const k=hmk();if(!Array.isArray(state.highlightCandidates[k]))state.highlightCandidates[k]=[];return state.highlightCandidates[k]}
 function hranks(){const k=hmk();if(!Array.isArray(state.highlights[k]))state.highlights[k]=[];return state.highlights[k]}
