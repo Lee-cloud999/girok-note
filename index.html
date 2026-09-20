@@ -49,7 +49,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .planOverviewEmpty{color:var(--muted);font-size:14px}
 .planOverviewControls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.planOverviewControls>div{min-width:0}.planOverviewShell{background:var(--lav1)}.planOverviewControls input,.planOverviewControls button{height:44px;min-height:44px;padding-top:8px;padding-bottom:8px}.planOverviewControls input{max-width:230px;padding-left:14px;padding-right:14px}
 .planTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.planTabs button{background:#fff;border:1px solid var(--line);font-size:13px}.planTabs button.active{background:var(--lav2)}
-.bottomnav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:20}.bottomnav button{background:transparent;font-size:11px;line-height:1.15;padding:7px 2px;min-width:0;white-space:nowrap}.bottomnav button.active{background:var(--lav1)}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:20}.bottomnav button{background:transparent;font-size:11px;line-height:1.15;padding:7px 2px;min-width:0;white-space:nowrap}.bottomnav button.active{background:var(--lav1)}
 .dailyHero{padding:10px 16px!important;margin:8px 0 10px!important;border-radius:20px!important}.dailyHero h1{font-size:25px;margin:0 0 2px}.dailyHero p{margin:0;line-height:1.35;font-size:14px}.auth{max-width:470px;margin:48px auto}.hero{width:72px;height:72px;border-radius:24px;background:var(--lav2);display:grid;place-items:center;margin:0 auto 12px;overflow:hidden}.hero img{width:100%;height:100%;object-fit:cover}.center{text-align:center}
 .planMemoSmall{min-height:42px;height:42px}.planEditorInner{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px}.planEditorInner h2{margin-bottom:10px}.dateSafe{width:100%;max-width:100%;min-width:0;display:block}.planDateCompact{height:44px;min-height:44px;padding-top:8px;padding-bottom:8px}.planEditor textarea{resize:none}.dateCenter{text-align:center}.dateCenter::-webkit-date-and-time-value{text-align:center}.dateCenter::-webkit-datetime-edit{display:flex;justify-content:center;align-items:center;width:100%}.dateCenter::-webkit-calendar-picker-indicator{margin-left:auto}.planFieldsWrap{margin-top:14px}.weekPlanFields{display:grid;gap:10px}.weekField{border:1px solid var(--line);border-radius:16px;padding:12px;background:#fcfbff}.weekField label{display:block;font-weight:800;margin-bottom:8px}.weekField .tiny{display:block;margin-top:2px}.weekField textarea{min-height:84px;resize:none}.recordMeta{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:wrap}.recordMeta .tiny{text-align:left;white-space:nowrap}.recordEditBox{margin-top:12px;padding:14px;border:1px solid var(--lav3);background:var(--lav1);border-radius:16px}.recordEditBox textarea{min-height:90px;resize:none}.recordEditGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.recordEditActions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.dailyEditorCard{background:var(--lav1)}.dailySection{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}.dailySection h2{margin-bottom:8px}.dailySection textarea{min-height:88px}.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;margin-top:4px}
@@ -58,6 +58,52 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#514a65;color:#fff;padding:11px 15px;border-radius:999px;opacity:0;transition:.2s;z-index:50;pointer-events:none}#toast.show{opacity:1}
 @media(min-width:700px){#tabDailyLog .calendarCard{padding-left:26px;padding-right:26px}}
 @media(max-width:560px){.grid2,.searchbar{grid-template-columns:1fr}.planOverviewControls{grid-template-columns:minmax(0,1fr) auto;gap:10px}.dailySection{padding:12px}.planOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.planOverviewCard{padding:10px;border-radius:16px}.planOverviewHead b{font-size:14px}.planOverviewHead .badge{font-size:10px;min-height:26px;padding:5px 7px}.planOverviewBody{font-size:12px}.planOverviewBody ul{margin:5px 0 0 15px}.planOverviewCard .actions button{font-size:11px;padding:7px 8px}#tabDaily .card{padding:14px;margin:8px 0}#tabDaily textarea{min-height:88px}.bottomnav button{font-size:10.5px;padding:6px 1px}}
+
+/* v19 reflection/search/favorites/mobile refinements */
+.fourLMain{background:var(--lav1)}
+.fourLDateRow{margin-top:8px}
+.fourLGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.fourLCard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px}
+.fourLCard h2{font-size:16px;margin:0 0 6px}
+.fourLCard textarea{min-height:78px;height:78px;padding:9px 10px;line-height:1.35;resize:none}
+.favoriteTabs,.searchModeTabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:12px 0}
+.favoriteTabs button,.searchModeTabs button{font-size:12px;padding:10px 5px;background:#fff;border:1px solid var(--line)}
+.favoriteTabs button.active,.searchModeTabs button.active{background:var(--lav2);border-color:var(--lav3)}
+.searchTools{display:grid;grid-template-columns:minmax(0,1fr) .8fr;gap:8px}
+.starButton{background:#fff;border:1px solid var(--line)}
+.starButton.on{background:var(--lav2);border-color:var(--lav3)}
+.calendarSelectedHead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.calendarTypeBadge{display:inline-flex;align-items:center;min-height:27px;padding:5px 8px;border-radius:999px;background:var(--lav1);font-size:11px;font-weight:900}
+
+/* 감칭반 */
+#tabDaily{margin-left:-6px;margin-right:-6px}
+#tabDaily .dailyEditorCard{padding-top:18px!important;padding-bottom:20px!important}
+#tabDaily .dailyEditorCard>p{margin-bottom:14px!important}
+#tabDaily .dailySection{padding:14px!important;margin-top:12px!important}
+#tabDaily .dailySection h2{font-size:20px!important;font-weight:900!important;margin-bottom:9px!important}
+#tabDaily .dailySection textarea{min-height:82px!important;height:82px!important;padding:12px 14px!important}
+#tabDaily #saveDaily{margin-top:12px!important;min-height:46px!important}
+
+/* 계획: 작은 화살표 + 제목 한 줄 */
+.planPeriodNav{grid-template-columns:26px minmax(0,1fr) 26px!important;gap:5px!important;align-items:center!important}
+.planPeriodNav b{white-space:nowrap!important;word-break:keep-all!important;writing-mode:horizontal-tb!important;text-orientation:mixed!important;overflow:visible!important;text-align:center!important;line-height:1.2!important}
+.planArrow{width:26px!important;height:26px!important;min-height:26px!important;padding:0!important;border-radius:0!important;background:transparent!important;font-size:22px!important;line-height:1!important;display:grid!important;place-items:center!important}
+
+@media(max-width:560px){
+  #tabDaily .dailyEditorCard{padding-top:16px!important;padding-bottom:18px!important}
+  #tabDaily .dailyEditorCard>p{margin-bottom:12px!important}
+  #tabDaily .dailySection{padding:12px!important;margin-top:10px!important}
+  #tabDaily .dailySection textarea{min-height:76px!important;height:76px!important}
+  #tabDaily #saveDaily{min-height:44px!important;margin-top:10px!important}
+  #tabFourL .fourLCard{padding:9px!important}
+  #tabFourL .fourLCard textarea{min-height:70px!important;height:70px!important}
+  .favoriteTabs button,.searchModeTabs button{font-size:11px;padding:9px 3px}
+  .searchTools{grid-template-columns:1fr}
+  .planPeriodNav{grid-template-columns:24px minmax(0,1fr) 24px!important;gap:4px!important}
+  .planPeriodNav b{font-size:14px!important;white-space:nowrap!important}
+  .planArrow{width:24px!important;height:24px!important;min-height:24px!important;font-size:20px!important}
+}
+
 </style>
 </head>
 <body><main>
@@ -148,18 +194,31 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 <div class="card">
   <h2>이번 달 기록 현황</h2>
   <div class="stats">
-    <div class="stat"><span class="tiny">기록</span><b id="statR">0</b></div>
-    <div class="stat"><span class="tiny">계획</span><b id="statP">0</b></div>
-    <div class="stat"><span class="tiny">하루기록</span><b id="statD">0</b></div>
+    <div class="stat"><span class="tiny">한 줄 기록</span><b id="statR">0</b></div>
+    <div class="stat"><span class="tiny">4L</span><b id="statP">0</b></div>
+    <div class="stat"><span class="tiny">감칭반</span><b id="statD">0</b></div>
   </div>
 </div>
-<div class="card"><h1>모아보기</h1><div class="searchbar"><input id="search" placeholder="제목·내용·태그 검색"><select id="filter"><option value="">모든 유형</option></select></div></div>
-<div id="allRecords"></div>
+<div class="card" style="background:var(--lav1)">
+  <h1>한줄검색</h1>
+  <p class="muted">한 줄 기록, 4L, 감칭반을 한곳에서 검색하고 다시 볼 수 있어요.</p>
+  <div class="searchModeTabs">
+    <button class="active" data-search-mode="all">전체</button>
+    <button data-search-mode="record">한 줄 기록</button>
+    <button data-search-mode="fourl">4L</button>
+    <button data-search-mode="daily">감칭반</button>
+  </div>
+  <div class="searchTools">
+    <input id="unifiedSearch" placeholder="전체 기록 검색">
+    <select id="recordTypeFilter"><option value="">모든 유형</option></select>
+  </div>
+</div>
+<div id="unifiedSearchResults"></div>
 </section>
 
 <section id="tabDaily" class="hidden">
 <div class="card dailyEditorCard">
-  <h1>하루기록</h1>
+  <h1>감칭반</h1>
   <p class="muted">오늘 하루에서 감사, 칭찬, 반성을 짧게 남겨보세요.</p>
   <div id="dailyEditNotice" class="tiny hidden" style="margin-top:8px;font-weight:800"></div>
 
@@ -167,26 +226,27 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
     <h2>감사</h2>
     <textarea id="gratitude" placeholder="오늘 감사했던 일, 고마웠던 사람이나 순간을 적어보세요."></textarea>
   </div>
-
   <div class="dailySection">
     <h2>칭찬</h2>
     <textarea id="praise" placeholder="오늘 내가 잘한 일, 스스로 칭찬해주고 싶은 점을 적어보세요."></textarea>
   </div>
-
   <div class="dailySection">
     <h2>반성</h2>
     <textarea id="reflection" placeholder="오늘 아쉬웠던 점이나 다음에는 다르게 해보고 싶은 일을 적어보세요."></textarea>
-    <button id="saveDaily" class="primary" style="width:100%;margin-top:10px">오늘의 하루기록 저장</button>
+    <button id="saveDaily" class="primary" style="width:100%;margin-top:10px">오늘의 감칭반 저장</button>
   </div>
+</div>
+<div class="card">
+  <div class="top"><h2>저장한 감칭반</h2><span id="dailyLogCount" class="tiny"></span></div>
+  <div id="dailyLogList"></div>
 </div>
 </section>
 
 <section id="tabDailyLog" class="hidden">
 <div class="card" style="background:var(--lav1)">
-  <h1>하루정리</h1>
-  <p class="muted">캘린더에서 날짜를 골라 그날의 하루기록을 다시 볼 수 있어요.</p>
+  <h1>캘린더</h1>
+  <p class="muted">한 줄 기록, 4L, 감칭반 중 하나라도 있는 날짜에 점이 표시돼요. 날짜를 누르면 그날 기록만 모아볼 수 있어요.</p>
 </div>
-
 <div class="card calendarCard">
   <div class="calendarInner">
     <div class="calendarHead">
@@ -201,26 +261,57 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
     <div class="tiny calendarHint">● 기록이 있는 날짜</div>
   </div>
 </div>
-
 <div id="selectedDailyLog"></div>
+</section>
 
-<div class="card">
-  <div class="top">
-    <h2>저장한 하루기록</h2>
-    <span id="dailyLogCount" class="tiny"></span>
+<section id="tabFourL" class="hidden">
+  <div class="card fourLMain">
+    <h1>4L 회고</h1>
+    <p class="muted">좋았던 것, 배운 것, 부족했던 것, 바라는 것을 정리해보세요.</p>
+    <div class="fourLDateRow">
+      <label class="tiny">회고 날짜</label>
+      <input id="fourLDate" class="dateSafe planDateCompact dateCenter" type="date">
+    </div>
+    <div class="fourLGrid">
+      <div class="fourLCard"><h2>❤️ Liked</h2><textarea id="fourLLiked" placeholder="좋았던 일, 만족스러웠던 점"></textarea></div>
+      <div class="fourLCard"><h2>📘 Learned</h2><textarea id="fourLLearned" placeholder="새롭게 배운 것, 깨달은 점"></textarea></div>
+      <div class="fourLCard"><h2>🪞 Lacked</h2><textarea id="fourLLacked" placeholder="부족했던 점, 아쉬웠던 점"></textarea></div>
+      <div class="fourLCard"><h2>🌱 Longed for</h2><textarea id="fourLLonged" placeholder="앞으로 바라는 것, 다음에 해보고 싶은 것"></textarea></div>
+    </div>
+    <button id="saveFourL" class="primary" style="width:100%;margin-top:10px">4L 저장</button>
   </div>
-  <div id="dailyLogList"></div>
-</div>
+  <div class="card">
+    <div class="top"><h2>저장한 4L</h2><span id="fourLCount" class="tiny"></span></div>
+    <div id="fourLList"></div>
+  </div>
 </section>
+
+<section id="tabFavorites" class="hidden">
+  <div class="card" style="background:var(--lav1)">
+    <h1>보관함</h1>
+    <p class="muted">별표한 한 줄 기록, 4L, 감칭반을 모아볼 수 있어요.</p>
+    <div class="favoriteTabs">
+      <button class="active" data-fav-filter="all">전체</button>
+      <button data-fav-filter="record">한 줄 기록</button>
+      <button data-fav-filter="fourl">4L</button>
+      <button data-fav-filter="daily">감칭반</button>
+    </div>
+  </div>
+  <div id="favoriteRecords"></div>
 </section>
+
+</section>
+</main></section>
 </main>
 
 <nav id="nav" class="bottomnav hidden">
 <button data-tab="Record" class="active">✍️<br>기록</button>
-<button data-tab="Browse">🔎<br>모아보기</button>
 <button data-tab="Plan">🗓️<br>계획</button>
-<button data-tab="Daily">🌙<br>하루기록</button>
-<button data-tab="DailyLog">📅<br>하루정리</button>
+<button data-tab="FourL">🔄<br>4L</button>
+<button data-tab="Daily">🌙<br>감칭반</button>
+<button data-tab="Browse">🔎<br>한줄검색</button>
+<button data-tab="DailyLog">📅<br>캘린더</button>
+<button data-tab="Favorites">⭐<br>보관함</button>
 </nav>
 <div id="pullRefresh" class="pullRefresh hidden">↓ 아래로 당겨 새로고침</div>
 <div id="toast"></div>
@@ -232,20 +323,22 @@ import { getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,getDocs,getDoc,q
 const firebaseConfig={"apiKey": "AIzaSyCOy8x5kPeJUUqRUjEHRqckT2ReULEoUac", "authDomain": "maeum-jogak2.firebaseapp.com", "projectId": "maeum-jogak2", "appId": "1:942972843404:web:8148d7610469425609d2a9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const TYPES=["✍️ 한 줄 기록","💬 아이디어","💻 개발노트","💜 감정","🗒️ 지식 메모","📚 독서와 필사","🎓 강의 메모"];
-const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],dailyLogs=[],planKind="year",selectedDailyDate=dayKey(),calendarCursor=new Date();
+const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],dailyLogs=[],fourLLogs=[],planKind="year",selectedDailyDate=dayKey(),calendarCursor=new Date(),searchMode="all",favoriteFilter="all";
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(t){let e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1400)}
 function showApp(ok){$("authView").classList.toggle("hidden",ok);$("appView").classList.toggle("hidden",!ok);$("nav").classList.toggle("hidden",!ok)}
 function activeTab(){return sessionStorage.getItem("girokNoteActiveTab")||"Record"}
 function showTab(tab){
-  const valid=["Record","Browse","Plan","Daily","DailyLog"];if(!valid.includes(tab))tab="Record";
+  const valid=["Record","Browse","Plan","Daily","DailyLog","FourL","Favorites"];if(!valid.includes(tab))tab="Record";
   sessionStorage.setItem("girokNoteActiveTab",tab);
   document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
-  ["Record","Plan","Browse","Daily","DailyLog"].forEach(t=>$("tab"+t).classList.toggle("hidden",t!==tab));
+  ["Record","Plan","Browse","Daily","DailyLog","FourL","Favorites"].forEach(t=>$("tab"+t).classList.toggle("hidden",t!==tab));
   if(tab==="Plan"){renderPlans();renderPlanOverview()}
-  if(tab==="Browse"){renderAll();renderStats()}
-  if(tab==="Daily"){renderStats()}
-  if(tab==="DailyLog"){selectedDailyDate=selectedDailyDate||dayKey();calendarCursor=dateFromValue(selectedDailyDate);renderCalendar();renderSelectedDailyLog();renderDailyLogList()}
+  if(tab==="Browse"){renderUnifiedSearch();renderStats()}
+  if(tab==="Daily"){renderStats();renderDailyLogList()}
+  if(tab==="DailyLog"){selectedDailyDate=selectedDailyDate||dayKey();calendarCursor=dateFromValue(selectedDailyDate);renderCalendar();renderSelectedUnifiedDay()}
+  if(tab==="FourL"){renderFourL()}
+  if(tab==="Favorites"){renderFavorites()}
 }
 function dayKey(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function monthKey(){let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
@@ -260,7 +353,7 @@ function dailyTimeLabel(d){
 }
 function clearDailyForm(){
   $("gratitude").value="";$("praise").value="";$("reflection").value="";
-  $("saveDaily").dataset.editDate="";$("saveDaily").textContent="오늘의 하루기록 저장";
+  $("saveDaily").dataset.editDate="";$("saveDaily").textContent="오늘의 감칭반 저장";
   $("dailyEditNotice").classList.add("hidden");$("dailyEditNotice").textContent="";
 }
 $("typeMenu").innerHTML=TYPES.map((t,i)=>`<button type="button" data-type="${t}" class="${i===0?"active":""}">${t}</button>`).join("");
@@ -268,7 +361,7 @@ function syncTypeMenu(){
   $("typeSelectLabel").textContent=selectedType;
   document.querySelectorAll("#typeMenu [data-type]").forEach(x=>x.classList.toggle("active",x.dataset.type===selectedType));
 }
-$("filter").innerHTML='<option value="">모든 유형</option>'+TYPES.map(t=>`<option>${t}</option>`).join("");
+$("recordTypeFilter").innerHTML='<option value="">모든 유형</option>'+TYPES.map(t=>`<option>${t}</option>`).join("");
 
 $("typeSelectBtn").onclick=()=>{
   $("typeMenu").classList.toggle("hidden");
@@ -286,7 +379,7 @@ document.addEventListener("click",e=>{
     $("typeMenu").classList.add("hidden");
     }
 });
-onAuthStateChanged(auth,async u=>{user=u;showApp(!!u);if(u){$("sync").textContent="☁️ "+u.email;await Promise.all([loadRecords(),loadPlans(),loadDailyLogs()]);clearDailyForm();showTab(activeTab())}});
+onAuthStateChanged(auth,async u=>{user=u;showApp(!!u);if(u){$("sync").textContent="☁️ "+u.email;await Promise.all([loadRecords(),loadPlans(),loadDailyLogs(),loadFourL()]);clearDailyForm();showTab(activeTab())}});
 $("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){$("authMsg").textContent="로그인 실패: "+e.message}};
 $("signup").onclick=async()=>{try{await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){$("authMsg").textContent="가입 실패: "+e.message}};
 $("logout").onclick=()=>signOut(auth);
@@ -299,14 +392,14 @@ $("saveRecord").onclick=async()=>{
   if(editId){
     await updateDoc(doc(db,"users",user.uid,"recordnote_records",editId),data);
   }else{
-    await addDoc(collection(db,"users",user.uid,"recordnote_records"),{...data,createdAt:serverTimestamp()});
+    await addDoc(collection(db,"users",user.uid,"recordnote_records"),{...data,favorite:false,createdAt:serverTimestamp()});
   }
   $("text").value="";$("title").value="";$("tags").value="";
   $("saveRecord").dataset.editId="";$("saveRecord").textContent="기록 저장";
   toast(editId?"기록을 수정했어요":"기록했어요");
   await loadRecords();
 };
-async function loadRecords(){let s=await getDocs(query(collection(db,"users",user.uid,"recordnote_records"),orderBy("createdAt","desc")));records=s.docs.map(d=>({id:d.id,...d.data()}));renderToday();renderAll();renderStats()}
+async function loadRecords(){let s=await getDocs(query(collection(db,"users",user.uid,"recordnote_records"),orderBy("createdAt","desc")));records=s.docs.map(d=>({id:d.id,...d.data()}));renderToday();renderUnifiedSearch();renderStats()}
 function normalizeType(type){
   const raw=String(type||"").trim();
   const map={
@@ -361,7 +454,7 @@ function card(r,mode="browse"){
     <div class="recordMeta"><span class="badge">${esc(displayType(r.type))}</span><span class="tiny">${esc(recordDateLabel(r,mode))}</span></div>
     ${title}<div class="recordBody">${esc(r.text)}</div>
     ${(r.tags||[]).length?`<div class="badges">${r.tags.map(t=>`<span class="badge">#${esc(t)}</span>`).join("")}</div>`:""}
-    <div class="actions recordActions"><button class="small" data-edit-record="${r.id}">수정</button><button class="small danger" data-del-record="${r.id}">삭제</button></div>
+    <div class="actions recordActions"><button class="small starButton ${r.favorite?"on":""}" data-fav-record="${r.id}">${r.favorite?"★":"☆"}</button><button class="small" data-edit-record="${r.id}">수정</button><button class="small danger" data-del-record="${r.id}">삭제</button></div>
     ${recordEditBox(r)}
   </div>`;
 }
@@ -369,6 +462,11 @@ function closeRecordEditors(exceptId=""){
   document.querySelectorAll("[data-edit-box]").forEach(box=>box.classList.toggle("hidden",box.dataset.editBox!==exceptId));
 }
 function wireRecordActions(){
+  document.querySelectorAll("[data-fav-record]").forEach(b=>b.onclick=async()=>{
+    const r=records.find(x=>x.id===b.dataset.favRecord);if(!r)return;
+    await updateDoc(doc(db,"users",user.uid,"recordnote_records",r.id),{favorite:!r.favorite,updatedAt:serverTimestamp()});
+    await loadRecords();renderFavorites();renderCalendar();renderSelectedUnifiedDay();
+  });
   document.querySelectorAll("[data-del-record]").forEach(b=>b.onclick=async()=>{if(confirm("이 기록을 삭제할까요?")){await deleteDoc(doc(db,"users",user.uid,"recordnote_records",b.dataset.delRecord));await loadRecords()}});
   document.querySelectorAll("[data-edit-record]").forEach(b=>b.onclick=()=>{closeRecordEditors(b.dataset.editRecord)});
   document.querySelectorAll("[data-cancel-edit]").forEach(b=>b.onclick=()=>closeRecordEditors());
@@ -384,8 +482,54 @@ function wireRecordActions(){
   });
 }
 function renderToday(){let key=dayKey(),a=records.filter(r=>{let d=when(r);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`===key});$("todayCount").textContent=`${a.length}개`;$("todayRecords").innerHTML=a.length?a.map(r=>card(r,"today")).join(""):'<p class="muted">오늘의 첫 기록을 남겨보세요.</p>';wireRecordActions()}
-function renderAll(){let q=$("search").value.toLowerCase(),f=$("filter").value,a=records.filter(r=>(!f||normalizeType(r.type)===f)&&(!q||((r.title||"")+" "+(r.text||"")+" "+(r.tags||[]).join(" ")).toLowerCase().includes(q)));$("allRecords").innerHTML=a.length?a.map(r=>card(r,"browse")).join(""):'<div class="card muted">조건에 맞는 기록이 없어요.</div>';wireRecordActions()}
-$("search").oninput=renderAll;$("filter").onchange=renderAll;
+function recordSearchText(r){return `${r.title||""} ${r.text||""} ${(r.tags||[]).join(" ")} ${displayType(r.type)||""}`.toLowerCase()}
+function fourLSearchText(x){return `${x.date||""} ${x.liked||""} ${x.learned||""} ${x.lacked||""} ${x.longed||""}`.toLowerCase()}
+function dailySearchText(d){return `${d.date||d.id||""} ${d.gratitude||""} ${d.praise||""} ${d.reflection||""}`.toLowerCase()}
+function fourLCard(x){
+  return `<div class="record"><div class="calendarSelectedHead"><div><b>${esc(x.date||"")}</b><div class="tiny">4L 회고</div></div><span class="calendarTypeBadge">🔄 4L</span></div>
+  ${x.liked?`<div class="recordBody"><b>❤️ Liked</b><br>${esc(x.liked)}</div>`:""}
+  ${x.learned?`<div class="recordBody"><b>📘 Learned</b><br>${esc(x.learned)}</div>`:""}
+  ${x.lacked?`<div class="recordBody"><b>🪞 Lacked</b><br>${esc(x.lacked)}</div>`:""}
+  ${x.longed?`<div class="recordBody"><b>🌱 Longed for</b><br>${esc(x.longed)}</div>`:""}
+  <div class="actions recordActions"><button class="small starButton ${x.favorite?"on":""}" data-fav-fourl="${x.id}">${x.favorite?"★":"☆"}</button><button class="small" data-edit-fourl="${x.id}">수정</button><button class="small danger" data-del-fourl="${x.id}">삭제</button></div></div>`;
+}
+function dailyUnifiedCard(d){
+  const key=d.date||d.id||"";
+  return `<div class="record"><div class="calendarSelectedHead"><div><b>${esc(key)}</b><div class="tiny">감칭반</div></div><span class="calendarTypeBadge">🌙 감칭반</span></div>
+  ${d.gratitude?`<div class="recordBody"><b>감사</b><br>${esc(d.gratitude)}</div>`:""}
+  ${d.praise?`<div class="recordBody"><b>칭찬</b><br>${esc(d.praise)}</div>`:""}
+  ${d.reflection?`<div class="recordBody"><b>반성</b><br>${esc(d.reflection)}</div>`:""}
+  <div class="actions recordActions"><button class="small starButton ${d.favorite?"on":""}" data-fav-daily="${esc(key)}">${d.favorite?"★":"☆"}</button><button class="small" data-edit-daily="${esc(key)}">수정</button><button class="small danger" data-del-daily="${esc(key)}">삭제</button></div></div>`;
+}
+function renderUnifiedSearch(){
+  if(!$("unifiedSearchResults"))return;
+  const q=($("unifiedSearch").value||"").trim().toLowerCase();
+  const typeFilter=$("recordTypeFilter").value||"";
+  $("recordTypeFilter").classList.toggle("hidden",searchMode!=="record");
+  const items=[];
+  if(searchMode==="all"||searchMode==="record"){
+    records.filter(r=>(searchMode!=="record"||!typeFilter||displayType(r.type)===typeFilter)&&(!q||recordSearchText(r).includes(q)))
+      .forEach(r=>items.push({date:when(r).toISOString(),html:card(r,"browse")}));
+  }
+  if(searchMode==="all"||searchMode==="fourl"){
+    fourLLogs.filter(x=>!q||fourLSearchText(x).includes(q)).forEach(x=>items.push({date:x.date||"",html:fourLCard(x)}));
+  }
+  if(searchMode==="all"||searchMode==="daily"){
+    dailyLogs.filter(d=>!q||dailySearchText(d).includes(q)).forEach(d=>items.push({date:d.date||d.id||"",html:dailyUnifiedCard(d)}));
+  }
+  items.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  $("unifiedSearchResults").innerHTML=items.length?items.map(x=>x.html).join(""):'<div class="card muted">조건에 맞는 기록이 없어요.</div>';
+  wireRecordActions();wireFourLActions();wireDailyActions();wireDailyFavorite();
+  document.querySelectorAll("[data-search-mode]").forEach(b=>{
+    b.classList.toggle("active",b.dataset.searchMode===searchMode);
+    b.onclick=()=>{searchMode=b.dataset.searchMode;$("unifiedSearch").value="";$("recordTypeFilter").value="";
+      $("unifiedSearch").placeholder=searchMode==="record"?"제목·내용·태그 검색":searchMode==="fourl"?"Liked·Learned·Lacked·Longed for 검색":searchMode==="daily"?"감사·칭찬·반성 검색":"전체 기록 검색";
+      renderUnifiedSearch();};
+  });
+}
+function renderAll(){renderUnifiedSearch()}
+$("unifiedSearch").oninput=renderUnifiedSearch;
+$("recordTypeFilter").onchange=renderUnifiedSearch;
 const planNames={year:"연간계획",month:"월간계획",week:"주간계획",day:"일간계획"};
 
 function localDateValue(d=new Date()){
@@ -712,23 +856,77 @@ function renderPlans(){
     await loadPlans();
   });
 }
+
+$("fourLDate").value=dayKey();
+$("saveFourL").onclick=async()=>{
+  const date=$("fourLDate").value||dayKey();
+  const liked=$("fourLLiked").value.trim(),learned=$("fourLLearned").value.trim(),lacked=$("fourLLacked").value.trim(),longed=$("fourLLonged").value.trim();
+  if(!liked&&!learned&&!lacked&&!longed)return alert("4L 내용을 하나라도 적어주세요.");
+  const existing=fourLLogs.find(x=>x.date===date);
+  const data={date,liked,learned,lacked,longed,favorite:existing?.favorite||false,updatedAt:serverTimestamp()};
+  if(existing)await updateDoc(doc(db,"users",user.uid,"recordnote_fourl",existing.id),data);
+  else await addDoc(collection(db,"users",user.uid,"recordnote_fourl"),{...data,createdAt:serverTimestamp()});
+  $("fourLLiked").value="";$("fourLLearned").value="";$("fourLLacked").value="";$("fourLLonged").value="";
+  toast("4L을 저장했어요");await loadFourL();renderUnifiedSearch();renderCalendar();renderSelectedUnifiedDay();renderStats();
+};
+async function loadFourL(){
+  const s=await getDocs(collection(db,"users",user.uid,"recordnote_fourl"));
+  fourLLogs=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+  renderFourL();renderStats();
+}
+function wireFourLActions(){
+  document.querySelectorAll("[data-fav-fourl]").forEach(b=>b.onclick=async()=>{
+    const x=fourLLogs.find(v=>v.id===b.dataset.favFourl);if(!x)return;
+    await updateDoc(doc(db,"users",user.uid,"recordnote_fourl",x.id),{favorite:!x.favorite,updatedAt:serverTimestamp()});
+    await loadFourL();renderUnifiedSearch();renderFavorites();renderCalendar();renderSelectedUnifiedDay();
+  });
+  document.querySelectorAll("[data-del-fourl]").forEach(b=>b.onclick=async()=>{
+    if(!confirm("이 4L을 삭제할까요?"))return;
+    await deleteDoc(doc(db,"users",user.uid,"recordnote_fourl",b.dataset.delFourl));
+    await loadFourL();renderUnifiedSearch();renderFavorites();renderCalendar();renderSelectedUnifiedDay();
+  });
+  document.querySelectorAll("[data-edit-fourl]").forEach(b=>b.onclick=()=>{
+    const x=fourLLogs.find(v=>v.id===b.dataset.editFourl);if(!x)return;
+    showTab("FourL");$("fourLDate").value=x.date;$("fourLLiked").value=x.liked||"";$("fourLLearned").value=x.learned||"";$("fourLLacked").value=x.lacked||"";$("fourLLonged").value=x.longed||"";window.scrollTo({top:0,behavior:"smooth"});
+  });
+}
+function renderFourL(){
+  if(!$("fourLList"))return;
+  $("fourLCount").textContent=`${fourLLogs.length}개`;
+  $("fourLList").innerHTML=fourLLogs.length?fourLLogs.map(fourLCard).join(""):'<p class="muted">아직 저장한 4L이 없어요.</p>';
+  wireFourLActions();
+}
+function renderFavorites(){
+  if(!$("favoriteRecords"))return;
+  const items=[];
+  if(favoriteFilter==="all"||favoriteFilter==="record")records.filter(r=>r.favorite).forEach(r=>items.push({date:when(r).toISOString(),html:card(r,"browse")}));
+  if(favoriteFilter==="all"||favoriteFilter==="fourl")fourLLogs.filter(x=>x.favorite).forEach(x=>items.push({date:x.date||"",html:fourLCard(x)}));
+  if(favoriteFilter==="all"||favoriteFilter==="daily")dailyLogs.filter(d=>d.favorite).forEach(d=>items.push({date:d.date||d.id||"",html:dailyUnifiedCard(d)}));
+  items.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  $("favoriteRecords").innerHTML=items.length?items.map(x=>x.html).join(""):'<div class="card muted">아직 별표한 기록이 없어요.</div>';
+  wireRecordActions();wireFourLActions();wireDailyActions();wireDailyFavorite();
+  document.querySelectorAll("[data-fav-filter]").forEach(b=>{b.classList.toggle("active",b.dataset.favFilter===favoriteFilter);b.onclick=()=>{favoriteFilter=b.dataset.favFilter;renderFavorites()}});
+}
+
 $("saveDaily").onclick=async()=>{
   const targetDate=$("saveDaily").dataset.editDate||dayKey();
   const ref=doc(db,"users",user.uid,"recordnote_daily",targetDate);
   const existing=await getDoc(ref);
+  const currentDaily=dailyLogs.find(x=>(x.date||x.id)===targetDate);
   const data={
     date:targetDate,
     gratitude:$("gratitude").value.trim(),
     praise:$("praise").value.trim(),
     reflection:$("reflection").value.trim(),
+    favorite:currentDaily?.favorite||false,
     updatedAt:serverTimestamp()
   };
   if(!existing.exists()) data.createdAt=serverTimestamp();
-  if(!data.gratitude && !data.praise && !data.reflection) return alert("하루기록 내용을 하나라도 적어주세요.");
+  if(!data.gratitude && !data.praise && !data.reflection) return alert("감칭반 내용을 하나라도 적어주세요.");
   const wasEdit=!!$("saveDaily").dataset.editDate;
   await setDoc(ref,data,{merge:true});
   clearDailyForm();
-  toast(wasEdit?"하루기록을 수정했어요":"하루기록을 저장했어요");
+  toast(wasEdit?"감칭반을 수정했어요":"감칭반을 저장했어요");
   await loadDailyLogs();
 };
 
@@ -759,86 +957,86 @@ async function loadDailyLogs(){
     .sort((a,b)=>(b.date||"").localeCompare(a.date||""));
   renderDailyLogList();
   renderCalendar();
-  renderSelectedDailyLog();
+  renderSelectedUnifiedDay();
   renderStats();
 }
-function dailyLogCard(d){
-  const key=d.date||d.id||"";
-  const time=dailyTimeLabel(d);
-  return `<div class="record">
-    <div class="dailyDateLine"><div class="recordTitle">${esc(key)}</div>${time?`<div class="tiny dailyTime">${esc(time)}</div>`:""}</div>
-    ${d.gratitude?`<div class="recordBody"><b>감사</b><br>${esc(d.gratitude)}</div>`:""}
-    ${d.praise?`<div class="recordBody"><b>칭찬</b><br>${esc(d.praise)}</div>`:""}
-    ${d.reflection?`<div class="recordBody"><b>반성</b><br>${esc(d.reflection)}</div>`:""}
-    <div class="actions"><button class="small" data-edit-daily="${esc(key)}">수정</button><button class="small danger" data-del-daily="${esc(key)}">삭제</button></div>
-  </div>`;
-}
+function dailyLogCard(d){return dailyUnifiedCard(d)}
 function wireDailyActions(){
   document.querySelectorAll("[data-edit-daily]").forEach(b=>b.onclick=async()=>{
     const key=b.dataset.editDaily;const d=dailyLogs.find(x=>(x.date||x.id)===key);if(!d)return;
     document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));
     document.querySelector('[data-tab="Daily"]').classList.add("active");
-    ["Record","Plan","Browse","Daily","DailyLog"].forEach(t=>$("tab"+t).classList.add("hidden"));
+    ["Record","Plan","Browse","Daily","DailyLog","FourL","Favorites"].forEach(t=>$("tab"+t).classList.add("hidden"));
     $("tabDaily").classList.remove("hidden");
     $("gratitude").value=d.gratitude||"";$("praise").value=d.praise||"";$("reflection").value=d.reflection||"";
-    $("saveDaily").dataset.editDate=key;$("saveDaily").textContent=`${key} 하루기록 수정 저장`;
+    $("saveDaily").dataset.editDate=key;$("saveDaily").textContent=`${key} 감칭반 수정 저장`;
     $("dailyEditNotice").textContent=`${key} 기록을 수정 중이에요.`;$("dailyEditNotice").classList.remove("hidden");
     window.scrollTo({top:0,behavior:"smooth"});
   });
   document.querySelectorAll("[data-del-daily]").forEach(b=>b.onclick=async()=>{
     const key=b.dataset.delDaily;if(!key)return;
-    if(confirm(`${key} 하루기록을 삭제할까요?`)){
+    if(confirm(`${key} 감칭반을 삭제할까요?`)){
       await deleteDoc(doc(db,"users",user.uid,"recordnote_daily",key));
-      if($("saveDaily").dataset.editDate===key){$("saveDaily").dataset.editDate="";$("saveDaily").textContent="오늘의 하루기록 저장";$("dailyEditNotice").classList.add("hidden");}
+      if($("saveDaily").dataset.editDate===key){$("saveDaily").dataset.editDate="";$("saveDaily").textContent="오늘의 감칭반 저장";$("dailyEditNotice").classList.add("hidden");}
       await loadDailyLogs();
     }
   });
 }
+function wireDailyFavorite(){
+  document.querySelectorAll("[data-fav-daily]").forEach(b=>b.onclick=async()=>{
+    const d=dailyLogs.find(x=>(x.date||x.id)===b.dataset.favDaily);if(!d)return;
+    const key=d.date||d.id;
+    await setDoc(doc(db,"users",user.uid,"recordnote_daily",key),{favorite:!d.favorite,updatedAt:serverTimestamp()},{merge:true});
+    await loadDailyLogs();renderUnifiedSearch();renderFavorites();renderCalendar();renderSelectedUnifiedDay();
+  });
+}
 function renderDailyLogList(){
-  if(!$("dailyLogList")) return;
+  if(!$("dailyLogList"))return;
   $("dailyLogCount").textContent=`${dailyLogs.length}개`;
-  $("dailyLogList").innerHTML=dailyLogs.length
-    ? dailyLogs.map(d=>dailyLogCard(d)).join("")
-    : '<p class="muted">아직 저장한 하루기록이 없어요.</p>';
-  wireDailyActions();
+  $("dailyLogList").innerHTML=dailyLogs.length?dailyLogs.map(d=>dailyUnifiedCard(d)).join(""):'<p class="muted">아직 저장한 감칭반이 없어요.</p>';
+  wireDailyActions();wireDailyFavorite();
 }
-function renderSelectedDailyLog(){
-  if(!$("selectedDailyLog")) return;
-  const key=selectedDailyDate||dayKey();
-  const d=dailyLogs.find(x=>(x.date||x.id)===key);
-  $("selectedDailyLog").innerHTML=d
-    ? dailyLogCard(d)
-    : '<div class="card muted">선택한 날짜에는 저장된 하루기록이 없어요.</div>';
-  wireDailyActions();
+function recordDayKey(r){
+  const d=when(r);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
+function hasAnyRecordOnDate(key){
+  return records.some(r=>recordDayKey(r)===key)||fourLLogs.some(x=>x.date===key)||dailyLogs.some(d=>(d.date||d.id)===key);
+}
+function renderSelectedUnifiedDay(){
+  if(!$("selectedDailyLog"))return;
+  const key=selectedDailyDate||dayKey(),items=[];
+  records.filter(r=>recordDayKey(r)===key).forEach(r=>items.push({date:when(r).toISOString(),html:card(r,"browse")}));
+  fourLLogs.filter(x=>x.date===key).forEach(x=>items.push({date:x.date||"",html:fourLCard(x)}));
+  dailyLogs.filter(d=>(d.date||d.id)===key).forEach(d=>items.push({date:d.date||d.id||"",html:dailyUnifiedCard(d)}));
+  items.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  $("selectedDailyLog").innerHTML=items.length?`<div class="card"><div class="top"><h2>${esc(key)} 기록</h2><span class="tiny">${items.length}개</span></div>${items.map(x=>x.html).join("")}</div>`:'<div class="card muted">선택한 날짜에는 저장된 기록이 없어요.</div>';
+  wireRecordActions();wireFourLActions();wireDailyActions();wireDailyFavorite();
+}
+function renderSelectedDailyLog(){renderSelectedUnifiedDay()}
 function renderCalendar(){
-  if(!$("dailyCalendar")) return;
-  const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth();
+  if(!$("dailyCalendar"))return;
+  const y=calendarCursor.getFullYear(),m=calendarCursor.getMonth(),first=new Date(y,m,1),days=new Date(y,m+1,0).getDate();
   $("calendarTitle").textContent=`${y}년 ${m+1}월`;
-  const first=new Date(y,m,1),days=new Date(y,m+1,0).getDate();
-  const today=dayKey();
   const cells=[];
-  for(let i=0;i<first.getDay();i++) cells.push('<span class="calBlank" aria-hidden="true"></span>');
+  for(let i=0;i<first.getDay();i++)cells.push('<span class="calBlank" aria-hidden="true"></span>');
   for(let d=1;d<=days;d++){
     const key=`${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const has=dailyLogs.some(x=>(x.date||x.id)===key);
-    const cls=["calDay",key===today?"today":"",key===selectedDailyDate?"selected":"",has?"hasRecord":""].filter(Boolean).join(" ");
+    const has=hasAnyRecordOnDate(key);
+    const cls=["calDay",key===selectedDailyDate?"selected":"",has?"hasRecord":""].filter(Boolean).join(" ");
     cells.push(`<button type="button" class="${cls}" data-cal-date="${key}" aria-label="${m+1}월 ${d}일${has?", 기록 있음":""}">${d}</button>`);
   }
   $("dailyCalendar").innerHTML=cells.join("");
-  document.querySelectorAll("[data-cal-date]").forEach(b=>b.onclick=()=>{
-    selectedDailyDate=b.dataset.calDate;renderCalendar();renderSelectedDailyLog();
-  });
+  document.querySelectorAll("[data-cal-date]").forEach(b=>b.onclick=()=>{selectedDailyDate=b.dataset.calDate;renderCalendar();renderSelectedUnifiedDay()});
 }
 $("calendarPrev").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);renderCalendar()};
 $("calendarNext").onclick=()=>{calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);renderCalendar()};
 
 async function renderStats(){
-  if(!user)return;
-  let mk=monthKey();
-  $("statR").textContent=records.filter(r=>{let d=when(r);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;
-  $("statP").textContent=plans.filter(p=>{let d=when(p);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;
-  $("statD").textContent=dailyLogs.filter(d=>(d.date||d.id||"").startsWith(mk)).length;
+  if(!user||!$("statR"))return;
+  const mk=monthKey();
+  $("statR").textContent=records.filter(r=>recordDayKey(r).startsWith(mk)).length;
+  $("statP").textContent=fourLLogs.filter(x=>String(x.date||"").startsWith(mk)).length;
+  $("statD").textContent=dailyLogs.filter(d=>String(d.date||d.id||"").startsWith(mk)).length;
 }
 
 function backupTimestampValue(v){
@@ -870,7 +1068,8 @@ $("backupExport").onclick=()=>{
     exportedAt:new Date().toISOString(),
     records:records.map(backupItem),
     plans:plans.map(backupItem),
-    dailyLogs:dailyLogs.map(backupItem)
+    dailyLogs:dailyLogs.map(backupItem),
+    fourLLogs:fourLLogs.map(backupItem)
   };
   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob),a=document.createElement("a");
@@ -898,7 +1097,12 @@ $("backupFile").onchange=async e=>{
       const key=d.date||d.id;if(!key)continue;
       await setDoc(doc(db,"users",user.uid,"recordnote_daily",key),restoreItem(d),{merge:true});
     }
-    await Promise.all([loadRecords(),loadPlans(),loadDailyLogs()]);
+    for(const f of (data.fourLLogs||[])){
+      const payload=restoreItem(f);
+      if(f.id)await setDoc(doc(db,"users",user.uid,"recordnote_fourl",f.id),payload,{merge:true});
+      else await addDoc(collection(db,"users",user.uid,"recordnote_fourl"),payload);
+    }
+    await Promise.all([loadRecords(),loadPlans(),loadDailyLogs(),loadFourL()]);
     toast("백업을 복원했어요");$("backupPanel").classList.add("hidden");
   }catch(err){alert("백업 복원에 실패했어요: "+err.message)}
   e.target.value="";
@@ -908,7 +1112,7 @@ let pullStartY=null,pullLastY=null,pullReady=false,pullBusy=false;
 async function refreshAllData(){
   if(!user||pullBusy)return;pullBusy=true;
   $("pullRefresh").textContent="새로고침 중…";$("pullRefresh").classList.remove("hidden");
-  try{const tab=activeTab();await Promise.all([loadRecords(),loadPlans(),loadDailyLogs()]);showTab(tab);toast("최신 기록을 불러왔어요");}
+  try{const tab=activeTab();await Promise.all([loadRecords(),loadPlans(),loadDailyLogs(),loadFourL()]);showTab(tab);toast("최신 기록을 불러왔어요");}
   finally{pullBusy=false;pullStartY=null;pullLastY=null;pullReady=false;setTimeout(()=>$("pullRefresh").classList.add("hidden"),350)}
 }
 document.addEventListener("touchstart",e=>{
