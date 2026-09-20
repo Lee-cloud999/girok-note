@@ -241,7 +241,8 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
     <div id="authMsg" class="authMsg"></div>
   </div>
 </section><main>
-<div class="top"><div><div class="brand">기록노트</div><div id="cloudStatus" class="tiny">☁️ 동기화 준비 중…</div></div><div class="headerActions"><button id="backupNow" class="secondary small" type="button">백업</button><button id="logout" class="secondary small" type="button">로그아웃</button></div></div>
+<div class="top"><div><div class="brand">기록노트</div><div id="cloudStatus" class="tiny">☁️ 동기화 준비 중…</div></div><div class="headerActions"><button id="backupNow" class="secondary small" type="button">백업 관리</button><button id="logout" class="secondary small" type="button">로그아웃</button></div></div>
+<div id="backupPanel" class="card hidden"><div class="top"><div><h2>☁️ 백업 관리</h2><div id="backupStatus" class="tiny">백업 상태를 확인하는 중…</div></div><button id="backupClose" class="secondary small" type="button">닫기</button></div><div class="backupButtons" style="margin-top:12px"><button id="backupCloud" class="primary" type="button">지금 스냅샷 백업</button><button id="backupExport" class="secondary" type="button">백업 파일 저장</button><button id="backupImport" class="secondary" type="button">백업 파일 복원</button><input id="backupFile" type="file" accept="application/json,.json" class="hidden"></div><div class="tiny" style="margin-top:10px">하루 한 번 자동 스냅샷을 남깁니다. 빈 데이터가 기존 클라우드 기록을 덮어쓰는 것도 차단합니다.</div></div>
 
 <section id="tabRecord">
 <div class="card" style="background:var(--lav1)"><h1>지금 떠오른 걸 적어보세요</h1>
@@ -416,7 +417,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore,doc,getDoc,setDoc,serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getFirestore,doc,getDoc,setDoc,getDocs,collection,query,orderBy,limit,serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 const firebaseConfig={"apiKey":"AIzaSyCOy8x5kPeJUUqRUjEHRqckT2ReULEoUac","authDomain":"maeum-jogak2.firebaseapp.com","projectId":"maeum-jogak2","storageBucket":"maeum-jogak2.firebasestorage.app","messagingSenderId":"942972843404","appId":"1:942972843404:web:8148d7610469425609d2a9","measurementId":"G-HCZ819E5VC"};
 const firebaseApp=initializeApp(firebaseConfig);
@@ -440,24 +441,53 @@ function saveState(){
     cloudTimer=setTimeout(()=>syncStateToCloud(),450);
   }
 }
+function stateCount(s){
+  if(!s)return 0;
+  return (s.records?.length||0)+(s.plans?.length||0)+Object.keys(s.daily||{}).length+(s.fourL?.length||0)+Object.keys(s.monthLines||{}).length+(s.moods?.length||0)+Object.values(s.highlights||{}).reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0)+Object.values(s.highlightCandidates||{}).reduce((n,a)=>n+(Array.isArray(a)?a.length:0),0);
+}
+function backupDay(){return new Date().toISOString().slice(0,10)}
+async function createCloudSnapshot(sourceState=state,label="auto"){
+  if(!currentUser||!sourceState)return;
+  const key=label==="auto"?backupDay():`${backupDay()}_${Date.now()}`;
+  const ref=doc(db,"users",currentUser.uid,"giroknote_backups",key);
+  if(label==="auto"){const old=await getDoc(ref);if(old.exists())return}
+  await setDoc(ref,{state:sourceState,createdAt:serverTimestamp(),label,count:stateCount(sourceState)});
+}
 async function syncStateToCloud(){
-  if(!currentUser)return;
+  if(!currentUser)return false;
   try{
     $("cloudStatus").textContent="☁️ 저장 중…";
-    await setDoc(doc(db,"users",currentUser.uid,"giroknote","state"),{state,updatedAt:serverTimestamp()},{merge:true});
+    const ref=doc(db,"users",currentUser.uid,"giroknote","state");
+    const remote=await getDoc(ref);
+    const remoteState=remote.exists()?remote.data().state:null;
+    const localCount=stateCount(state),remoteCount=stateCount(remoteState);
+    if(localCount===0&&remoteCount>0){
+      $("cloudStatus").textContent="🛡️ 빈 데이터 덮어쓰기 차단됨";
+      console.warn("Protected cloud data from empty overwrite");
+      return false;
+    }
+    if(remoteState&&remoteCount>0)await createCloudSnapshot(remoteState,"auto");
+    await setDoc(ref,{state,updatedAt:serverTimestamp(),schemaVersion:12},{merge:true});
     $("cloudStatus").textContent="☁️ "+currentUser.email+" · 동기화됨";
-  }catch(e){$("cloudStatus").textContent="⚠️ 동기화 오류";console.error(e)}
+    return true;
+  }catch(e){$("cloudStatus").textContent="⚠️ 동기화 오류";console.error(e);return false}
 }
 async function loadCloudState(){
   const ref=doc(db,"users",currentUser.uid,"giroknote","state");
   const snap=await getDoc(ref);
   if(snap.exists()&&snap.data().state){
-    state={...emptyState(),...snap.data().state};
+    const remoteState={...emptyState(),...snap.data().state};
+    if(stateCount(remoteState)>0)state=remoteState;
+    else if(stateCount(state)>0){
+      $("cloudStatus").textContent="🛡️ 빈 클라우드 데이터 감지 · 로컬 기록 보호 중";
+      await setDoc(ref,{state,updatedAt:serverTimestamp(),schemaVersion:12},{merge:true});
+    }else state=remoteState;
     localStorage.setItem(STORE,JSON.stringify(state));
   }else{
-    await setDoc(ref,{state,updatedAt:serverTimestamp()},{merge:true});
+    await setDoc(ref,{state,updatedAt:serverTimestamp(),schemaVersion:12},{merge:true});
   }
   cloudReady=true;
+  if(stateCount(state)>0)await createCloudSnapshot(state,"auto");
   $("cloudStatus").textContent="☁️ "+currentUser.email+" · 동기화됨";
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -814,7 +844,13 @@ function renderEverything(){
 $("loginBtn").onclick=async()=>{try{$("authMsg").textContent="";await signInWithEmailAndPassword(auth,$("authEmail").value.trim(),$("authPassword").value)}catch(e){$("authMsg").textContent="로그인 실패: "+e.message}};
 $("signupBtn").onclick=async()=>{try{$("authMsg").textContent="";await createUserWithEmailAndPassword(auth,$("authEmail").value.trim(),$("authPassword").value)}catch(e){$("authMsg").textContent="가입 실패: "+e.message}};
 $("logout").onclick=()=>signOut(auth);
-$("backupNow").onclick=async()=>{await syncStateToCloud();const blob=new Blob([JSON.stringify({version:12,state},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`기록노트_백업_${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("클라우드 저장 + JSON 백업 완료")};
+function exportBackup(){const blob=new Blob([JSON.stringify({app:"기록노트",version:12,exportedAt:new Date().toISOString(),state},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`기록노트_백업_${backupDay()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("백업 파일을 저장했어요")};
+$("backupNow").onclick=()=>{$("backupPanel").classList.toggle("hidden");$("backupStatus").textContent=`현재 기록 ${stateCount(state)}개 · 하루 1회 자동 스냅샷`};
+$("backupClose").onclick=()=>$("backupPanel").classList.add("hidden");
+$("backupCloud").onclick=async()=>{try{await createCloudSnapshot(state,"manual");await syncStateToCloud();$("backupStatus").textContent=`${new Date().toLocaleString("ko-KR")} 수동 스냅샷 완료`;toast("Firebase 스냅샷 백업 완료")}catch(e){alert("스냅샷 백업에 실패했어요: "+e.message)}};
+$("backupExport").onclick=exportBackup;
+$("backupImport").onclick=()=>$("backupFile").click();
+$("backupFile").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=data.state||data;if(!incoming||typeof incoming!=="object")throw new Error("올바른 기록노트 백업 파일이 아니에요.");if(!confirm(`백업 파일의 기록 ${stateCount(incoming)}개를 복원할까요? 현재 상태는 먼저 Firebase 스냅샷으로 보관합니다.`)){e.target.value="";return}await createCloudSnapshot(state,"before_restore");state={...emptyState(),...incoming};if(!Array.isArray(state.records))state.records=[];if(!Array.isArray(state.plans))state.plans=[];if(!Array.isArray(state.fourL))state.fourL=[];if(!state.daily)state.daily={};if(!state.monthLines)state.monthLines={};if(!Array.isArray(state.moods))state.moods=[];if(!state.highlights)state.highlights={};if(!state.highlightCandidates)state.highlightCandidates={};localStorage.setItem(STORE,JSON.stringify(state));await syncStateToCloud();renderEverything();toast("백업 파일을 복원했어요");$("backupPanel").classList.add("hidden")}catch(err){alert("백업 복원에 실패했어요: "+err.message)}e.target.value=""};
 
 onAuthStateChanged(auth,async u=>{
   currentUser=u;
