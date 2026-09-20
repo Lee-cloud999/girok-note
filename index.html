@@ -43,8 +43,10 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .dailyHero{padding:10px 16px!important;margin:8px 0 10px!important;border-radius:20px!important}.dailyHero h1{font-size:25px;margin:0 0 2px}.dailyHero p{margin:0;line-height:1.35;font-size:14px}.auth{max-width:470px;margin:48px auto}.hero{width:72px;height:72px;border-radius:24px;background:var(--lav2);display:grid;place-items:center;margin:0 auto 12px;font-size:34px}.center{text-align:center}
 .planMemoSmall{min-height:42px;height:42px}.dateSafe{width:100%;max-width:100%;min-width:0;display:block}.dailyEditorCard{background:var(--lav1)}.dailySection{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px}.dailySection h2{margin-bottom:8px}.dailySection textarea{min-height:88px}.checkItem{display:flex;gap:9px;align-items:flex-start;margin:9px 0}.checkItem input{width:auto;margin-top:3px}.searchbar{display:grid;grid-template-columns:1.2fr .8fr;gap:8px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center}.stat b{display:block;font-size:22px;margin-top:4px}
+.headerActions{display:flex;gap:7px;align-items:center}.backupPanel{margin-top:8px}.backupButtons{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.pullRefresh{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:70;background:#514a65;color:#fff;padding:9px 13px;border-radius:999px;font-size:13px;font-weight:800;box-shadow:0 6px 18px rgba(50,40,70,.2)}
 .calendarCard{overflow:hidden}.calendarHead{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:8px}.calendarHead h2{text-align:center;margin:0}.calendarHead button{padding:8px 10px;min-height:40px}.calendarWeekdays,.dailyCalendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.calendarWeekdays{margin-top:14px;color:var(--muted);font-size:12px;text-align:center;font-weight:800}.dailyCalendar{margin-top:7px}.calBlank{aspect-ratio:1/1}.calDay{position:relative;aspect-ratio:1/1;min-width:0;padding:0;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:14px}.calDay.today{border-color:var(--lav3)}.calDay.selected{background:var(--lav2);border-color:var(--lav3)}.calDay.hasRecord::after{content:"";position:absolute;left:50%;bottom:6px;width:5px;height:5px;border-radius:50%;background:#7d65b3;transform:translateX(-50%)}.calendarHint{margin-top:10px;text-align:right}.dailyTime{margin-top:3px}.dailyDateLine{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 #toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%);background:#514a65;color:#fff;padding:11px 15px;border-radius:999px;opacity:0;transition:.2s;z-index:50;pointer-events:none}#toast.show{opacity:1}
+@media(min-width:700px){#tabDailyLog .calendarCard{max-width:660px;margin-left:auto;margin-right:auto}}
 @media(max-width:560px){.grid2,.searchbar{grid-template-columns:1fr}.planOverviewControls{grid-template-columns:minmax(0,1fr) auto;gap:10px}.dailySection{padding:12px}.planOverviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.planOverviewCard{padding:10px;border-radius:16px}.planOverviewHead b{font-size:14px}.planOverviewHead .badge{font-size:10px;min-height:26px;padding:5px 7px}.planOverviewBody{font-size:12px}.planOverviewBody ul{margin:5px 0 0 15px}.planOverviewCard .actions button{font-size:11px;padding:7px 8px}#tabDaily .card{padding:14px;margin:8px 0}#tabDaily textarea{min-height:88px}.bottomnav button{font-size:10.5px;padding:6px 1px}}
 </style>
 </head>
@@ -58,7 +60,16 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 </div></section>
 
 <section id="appView" class="hidden">
-<div class="top"><div><div class="brand">기록노트</div><div id="sync" class="tiny">동기화 중…</div></div><button id="logout" class="secondary small">로그아웃</button></div>
+<div class="top"><div><div class="brand">기록노트</div><div id="sync" class="tiny">동기화 중…</div></div><div class="headerActions"><button id="backupToggle" class="secondary small" type="button">백업</button><button id="logout" class="secondary small">로그아웃</button></div></div>
+<div id="backupPanel" class="card backupPanel hidden">
+  <div class="top"><div><h2>데이터 백업</h2><div class="tiny">기록 · 계획 · 하루기록을 파일로 보관하거나 다시 복원할 수 있어요.</div></div><button id="backupClose" class="secondary small" type="button">닫기</button></div>
+  <div class="backupButtons">
+    <button id="backupExport" class="primary" type="button">백업 파일 저장</button>
+    <button id="backupImport" class="secondary" type="button">백업 파일 복원</button>
+    <input id="backupFile" type="file" accept="application/json,.json" class="hidden">
+  </div>
+  <div class="tiny" style="margin-top:8px">복원 시 같은 기록 ID/날짜는 백업 내용으로 덮어쓰고, 다른 기존 데이터는 유지됩니다.</div>
+</div>
 
 <section id="tabRecord">
 <div class="card" style="background:var(--lav1)"><h1>지금 떠오른 걸 적어보세요</h1>
@@ -197,6 +208,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 <button data-tab="Daily">🌙<br>하루기록</button>
 <button data-tab="DailyLog">📅<br>하루정리</button>
 </nav>
+<div id="pullRefresh" class="pullRefresh hidden">↓ 아래로 당겨 새로고침</div>
 <div id="toast"></div>
 
 <script type="module">
@@ -205,7 +217,7 @@ import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEma
 import { getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,getDocs,getDoc,query,orderBy,serverTimestamp,setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 const firebaseConfig={"apiKey": "AIzaSyCOy8x5kPeJUUqRUjEHRqckT2ReULEoUac", "authDomain": "maeum-jogak2.firebaseapp.com", "projectId": "maeum-jogak2", "appId": "1:942972843404:web:8148d7610469425609d2a9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const TYPES=["한 줄 기록","아이디어","감각·감정","지식","묘사","독서","강의"];
+const TYPES=["한 줄 기록","아이디어","어플 아이디어","감각·감정","지식","묘사","독서","필사","강의"];
 const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],dailyLogs=[],planKind="year",selectedDailyDate=dayKey(),calendarCursor=new Date();
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(t){let e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1400)}
@@ -227,6 +239,10 @@ function clearDailyForm(){
   $("dailyEditNotice").classList.add("hidden");$("dailyEditNotice").textContent="";
 }
 $("typeMenu").innerHTML=TYPES.map((t,i)=>`<button type="button" data-type="${t}" class="${i===0?"active":""}">${t}</button>`).join("");
+function syncTypeMenu(){
+  $("typeSelectLabel").textContent=selectedType;
+  document.querySelectorAll("#typeMenu [data-type]").forEach(x=>x.classList.toggle("active",x.dataset.type===selectedType));
+}
 $("filter").innerHTML='<option value="">모든 유형</option>'+TYPES.map(t=>`<option>${t}</option>`).join("");
 
 $("typeSelectBtn").onclick=()=>{
@@ -271,7 +287,7 @@ function wireRecordActions(){
   document.querySelectorAll("[data-del-record]").forEach(b=>b.onclick=async()=>{if(confirm("이 기록을 삭제할까요?")){await deleteDoc(doc(db,"users",user.uid,"recordnote_records",b.dataset.delRecord));await loadRecords()}});
   document.querySelectorAll("[data-edit-record]").forEach(b=>b.onclick=()=>{
     const r=records.find(x=>x.id===b.dataset.editRecord);if(!r)return;
-    selectedType=r.type||TYPES[0];$("typeSelectLabel").textContent=selectedType;renderTypeMenu();
+    selectedType=r.type||TYPES[0];syncTypeMenu();
     $("text").value=r.text||"";$("title").value=r.title||"";$("tags").value=(r.tags||[]).join(", ");
     $("saveRecord").dataset.editId=r.id;$("saveRecord").textContent="수정 저장";
     document.querySelector('[data-tab="Record"]').click();
@@ -599,6 +615,92 @@ async function renderStats(){
   $("statP").textContent=plans.filter(p=>{let d=when(p);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`===mk}).length;
   $("statD").textContent=dailyLogs.filter(d=>(d.date||d.id||"").startsWith(mk)).length;
 }
+
+function backupTimestampValue(v){
+  if(v?.toDate)return v.toDate().toISOString();
+  if(v instanceof Date)return v.toISOString();
+  return v??null;
+}
+function backupItem(item){
+  const out={...item};
+  if("createdAt" in out)out.createdAt=backupTimestampValue(out.createdAt);
+  if("updatedAt" in out)out.updatedAt=backupTimestampValue(out.updatedAt);
+  return out;
+}
+function restoreItem(item){
+  const out={...item};delete out.id;
+  for(const k of ["createdAt","updatedAt"]){
+    if(typeof out[k]==="string"){
+      const d=new Date(out[k]);if(!Number.isNaN(d.getTime()))out[k]=d;
+    }
+  }
+  return out;
+}
+$("backupToggle").onclick=()=>$("backupPanel").classList.toggle("hidden");
+$("backupClose").onclick=()=>$("backupPanel").classList.add("hidden");
+$("backupExport").onclick=()=>{
+  const data={
+    app:"기록노트",
+    version:1,
+    exportedAt:new Date().toISOString(),
+    records:records.map(backupItem),
+    plans:plans.map(backupItem),
+    dailyLogs:dailyLogs.map(backupItem)
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=`기록노트_백업_${dayKey()}.json`;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);toast("백업 파일을 만들었어요");
+};
+$("backupImport").onclick=()=>$("backupFile").click();
+$("backupFile").onchange=async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(!Array.isArray(data.records)||!Array.isArray(data.plans)||!Array.isArray(data.dailyLogs))throw new Error("올바른 기록노트 백업 파일이 아니에요.");
+    if(!confirm("이 백업 파일을 현재 계정에 복원할까요? 같은 ID나 날짜의 데이터는 백업 내용으로 덮어씁니다.")){e.target.value="";return;}
+    for(const r of data.records){
+      const payload=restoreItem(r);
+      if(r.id)await setDoc(doc(db,"users",user.uid,"recordnote_records",r.id),payload,{merge:true});
+      else await addDoc(collection(db,"users",user.uid,"recordnote_records"),payload);
+    }
+    for(const pl of data.plans){
+      const payload=restoreItem(pl);
+      if(pl.id)await setDoc(doc(db,"users",user.uid,"recordnote_plans",pl.id),payload,{merge:true});
+      else await addDoc(collection(db,"users",user.uid,"recordnote_plans"),payload);
+    }
+    for(const d of data.dailyLogs){
+      const key=d.date||d.id;if(!key)continue;
+      await setDoc(doc(db,"users",user.uid,"recordnote_daily",key),restoreItem(d),{merge:true});
+    }
+    await Promise.all([loadRecords(),loadPlans(),loadDailyLogs()]);
+    toast("백업을 복원했어요");$("backupPanel").classList.add("hidden");
+  }catch(err){alert("백업 복원에 실패했어요: "+err.message)}
+  e.target.value="";
+};
+
+let pullStartY=null,pullLastY=null,pullReady=false,pullBusy=false;
+async function refreshAllData(){
+  if(!user||pullBusy)return;pullBusy=true;
+  $("pullRefresh").textContent="새로고침 중…";$("pullRefresh").classList.remove("hidden");
+  try{await Promise.all([loadRecords(),loadPlans(),loadDailyLogs()]);toast("최신 기록을 불러왔어요");}
+  finally{pullBusy=false;pullStartY=null;pullLastY=null;pullReady=false;setTimeout(()=>$("pullRefresh").classList.add("hidden"),350)}
+}
+document.addEventListener("touchstart",e=>{
+  if(window.scrollY<=1&&e.touches.length===1){pullStartY=e.touches[0].clientY;pullLastY=pullStartY;pullReady=false;}
+  else pullStartY=null;
+},{passive:true});
+document.addEventListener("touchmove",e=>{
+  if(pullStartY===null||e.touches.length!==1)return;
+  pullLastY=e.touches[0].clientY;const dy=pullLastY-pullStartY;
+  if(dy>18){$("pullRefresh").classList.remove("hidden");pullReady=dy>85;$("pullRefresh").textContent=pullReady?"놓으면 새로고침":"↓ 아래로 당겨 새로고침";}
+},{passive:true});
+document.addEventListener("touchend",()=>{
+  const should=pullStartY!==null&&pullReady&&window.scrollY<=2;
+  if(should)refreshAllData();else if(!pullBusy)$("pullRefresh").classList.add("hidden");
+  pullStartY=null;pullLastY=null;pullReady=false;
+},{passive:true});
+
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));b.classList.add("active");["Record","Plan","Browse","Daily","DailyLog"].forEach(t=>$("tab"+t).classList.add("hidden"));$("tab"+b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="Plan"){renderPlans();renderPlanOverview();}if(b.dataset.tab==="Browse"){renderAll();renderStats();}if(b.dataset.tab==="Daily"){clearDailyForm();renderStats()}if(b.dataset.tab==="DailyLog"){selectedDailyDate=selectedDailyDate||dayKey();calendarCursor=dateFromValue(selectedDailyDate);renderCalendar();renderSelectedDailyLog();renderDailyLogList()}});
 if("serviceWorker"in navigator)addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
 </script></body></html>
