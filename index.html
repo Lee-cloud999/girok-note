@@ -85,7 +85,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 <div class="card" style="background:var(--lav1)"><h1>지금 떠오른 걸 적어보세요</h1>
 <div class="typeSelectWrap">
   <button type="button" id="typeSelectBtn" class="typeSelectBtn">
-    <span id="typeSelectLabel">한 줄 기록</span>
+    <span id="typeSelectLabel">✍️ 한 줄 기록</span>
   </button>
   <div id="typeMenu" class="typeMenu hidden"></div>
 </div>
@@ -231,7 +231,7 @@ import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEma
 import { getFirestore,collection,addDoc,doc,updateDoc,deleteDoc,getDocs,getDoc,query,orderBy,serverTimestamp,setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 const firebaseConfig={"apiKey": "AIzaSyCOy8x5kPeJUUqRUjEHRqckT2ReULEoUac", "authDomain": "maeum-jogak2.firebaseapp.com", "projectId": "maeum-jogak2", "appId": "1:942972843404:web:8148d7610469425609d2a9"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const TYPES=["한 줄 기록","💬 아이디어","💻 개발노트","💜 감정","🗒️ 지식 메모","📚 독서와 필사","🎓 강의 메모"];
+const TYPES=["✍️ 한 줄 기록","💬 아이디어","💻 개발노트","💜 감정","🗒️ 지식 메모","📚 독서와 필사","🎓 강의 메모"];
 const $=x=>document.getElementById(x);let user=null,selectedType=TYPES[0],records=[],plans=[],dailyLogs=[],planKind="year",selectedDailyDate=dayKey(),calendarCursor=new Date();
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(t){let e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1400)}
@@ -330,7 +330,8 @@ function normalizeType(type){
     "강의":"🎓 강의 메모",
     "강의 메모":"🎓 강의 메모",
     "🎓 강의 메모":"🎓 강의 메모",
-    "한 줄 기록":"한 줄 기록"
+    "한 줄 기록":"✍️ 한 줄 기록",
+    "✍️ 한 줄 기록":"✍️ 한 줄 기록"
   };
   return map[raw]||raw||TYPES[0];
 }
@@ -431,7 +432,7 @@ function weekOfMonthIndex(date){
   const firstMonthDay=new Date(date.getFullYear(),date.getMonth(),1);
   const firstWeekStart=mondayOf(firstMonthDay);
   const currentWeekStart=mondayOf(date);
-  return Math.floor((currentWeekStart-firstWeekStart)/604800000)+1;
+  return Math.min(5,Math.max(1,Math.floor((currentWeekStart-firstWeekStart)/604800000)+1));
 }
 function weekSlotRangeLabel(date,index){
   const firstMonthDay=new Date(date.getFullYear(),date.getMonth(),1);
@@ -444,8 +445,8 @@ function weekSlotRangeLabel(date,index){
 }
 function normalizeWeekItems(items){
   const arr=Array.isArray(items)?items.map(v=>String(v??"")) : [];
-  while(arr.length<6)arr.push("");
-  return arr.slice(0,6);
+  while(arr.length<5)arr.push("");
+  return arr.slice(0,5);
 }
 function planForOverview(kind,date){
   if(kind==="week") return plans.find(p=>p.kind==="week" && (p.periodKey||"")===monthPeriodKey(date)) || null;
@@ -462,7 +463,7 @@ function weeklySlotText(plan,date){
 function renderWeekPlanFields(date,values=[]){
   const target=date||dateFromValue($("planBaseDate").value||localDateValue());
   const items=normalizeWeekItems(values);
-  $("weekPlanFields").innerHTML=Array.from({length:6},(_,i)=>{
+  $("weekPlanFields").innerHTML=Array.from({length:5},(_,i)=>{
     const index=i+1;
     return `<div class="weekField"><label for="weekItem${index}">${index}주 <span class="tiny">${weekSlotRangeLabel(target,index)}</span></label><textarea id="weekItem${index}" data-week-item="${index}" placeholder="${index}주 계획을 적어주세요.">${esc(items[i])}</textarea></div>`;
   }).join("");
