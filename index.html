@@ -242,7 +242,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
   </div>
 </section><main>
 <div class="top"><div><div class="brand">기록노트</div><div id="cloudStatus" class="tiny">☁️ 동기화 준비 중…</div></div><div class="headerActions"><button id="backupNow" class="secondary small" type="button">백업 관리</button><button id="logout" class="secondary small" type="button">로그아웃</button></div></div>
-<div id="backupPanel" class="card hidden"><div class="top"><div><h2>☁️ 백업 관리</h2><div id="backupStatus" class="tiny">백업 상태를 확인하는 중…</div></div><button id="backupClose" class="secondary small" type="button">닫기</button></div><div class="backupButtons" style="margin-top:12px"><button id="backupCloud" class="primary" type="button">지금 스냅샷 백업</button><button id="backupExport" class="secondary" type="button">백업 파일 저장</button><button id="backupImport" class="secondary" type="button">백업 파일 복원</button><input id="backupFile" type="file" accept="application/json,.json" class="hidden"></div><div class="tiny" style="margin-top:10px">하루 한 번 자동 스냅샷을 남깁니다. 빈 데이터가 기존 클라우드 기록을 덮어쓰는 것도 차단합니다.</div></div>
+<div id="backupPanel" class="card hidden"><div class="top"><div><h2>☁️ 백업 관리</h2><div id="backupStatus" class="tiny">백업 상태를 확인하는 중…</div></div><button id="backupClose" class="secondary small" type="button">닫기</button></div><div class="backupButtons" style="margin-top:12px"><button id="backupCloud" class="primary" type="button">지금 스냅샷 백업</button><button id="backupExport" class="secondary" type="button">백업 파일 저장</button><button id="backupImport" class="secondary" type="button">백업 파일 복원</button><button id="recoverLegacy" class="secondary" type="button">예전 기록 가져오기</button><input id="backupFile" type="file" accept="application/json,.json" class="hidden"></div><div class="tiny" style="margin-top:10px">하루 한 번 자동 스냅샷을 남깁니다. 빈 데이터가 기존 클라우드 기록을 덮어쓰는 것도 차단합니다.</div></div>
 
 <section id="tabRecord">
 <div class="card" style="background:var(--lav1)"><h1>지금 떠오른 걸 적어보세요</h1>
@@ -850,6 +850,135 @@ $("backupClose").onclick=()=>$("backupPanel").classList.add("hidden");
 $("backupCloud").onclick=async()=>{try{await createCloudSnapshot(state,"manual");await syncStateToCloud();$("backupStatus").textContent=`${new Date().toLocaleString("ko-KR")} 수동 스냅샷 완료`;toast("Firebase 스냅샷 백업 완료")}catch(e){alert("스냅샷 백업에 실패했어요: "+e.message)}};
 $("backupExport").onclick=exportBackup;
 $("backupImport").onclick=()=>$("backupFile").click();
+
+function legacyIso(v,fallbackDate=""){
+  try{
+    if(v?.toDate)return v.toDate().toISOString();
+    if(typeof v==="string"&&v)return new Date(v).toISOString();
+  }catch{}
+  if(fallbackDate){
+    const d=new Date(fallbackDate+"T12:00:00");
+    if(!Number.isNaN(d.getTime()))return d.toISOString();
+  }
+  return new Date().toISOString();
+}
+function legacyType(type){
+  const raw=String(type||"").trim();
+  const map={
+    "아이디어":"💬 아이디어","💬 아이디어":"💬 아이디어",
+    "어플 아이디어":"💻 개발노트","어플":"💻 개발노트","개발노트":"💻 개발노트","💻 개발노트":"💻 개발노트",
+    "감각·감정":"💜 감정","감정 기록":"💜 감정","감정":"💜 감정","💜 감정":"💜 감정",
+    "지식":"🗒️ 지식 메모","지식 메모":"🗒️ 지식 메모","🗒️ 지식 메모":"🗒️ 지식 메모",
+    "독서":"📚 독서와 필사","필사":"📚 독서와 필사","독서와 필사":"📚 독서와 필사","📚 독서와 필사":"📚 독서와 필사",
+    "강의":"🎓 강의 메모","강의 메모":"🎓 강의 메모","🎓 강의 메모":"🎓 강의 메모",
+    "한 줄 기록":"✍️ 한 줄 기록","✍️ 한 줄 기록":"✍️ 한 줄 기록"
+  };
+  return map[raw]||raw||TYPES[0];
+}
+async function recoverLegacyFirebase(){
+  if(!currentUser)return alert("먼저 로그인해 주세요.");
+  if(!confirm("예전 Firebase 기록을 현재 기록노트에 합칠까요?\n\n현재 기록은 지우지 않으며, 가져오기 직전 상태를 스냅샷으로 먼저 보관합니다."))return;
+  const btn=$("recoverLegacy");
+  const oldText=btn.textContent;
+  btn.disabled=true; btn.textContent="가져오는 중…";
+  try{
+    await createCloudSnapshot(state,"before_legacy_recovery");
+
+    const [recordSnap,planSnap,dailySnap]=await Promise.all([
+      getDocs(collection(db,"users",currentUser.uid,"recordnote_records")),
+      getDocs(collection(db,"users",currentUser.uid,"recordnote_plans")),
+      getDocs(collection(db,"users",currentUser.uid,"recordnote_daily"))
+    ]);
+
+    let addedRecords=0,addedPlans=0,addedDaily=0,mergedDaily=0;
+
+    for(const d of recordSnap.docs){
+      const x=d.data();
+      const legacyId=d.id;
+      const exists=state.records.some(r=>r.legacySourceId===legacyId);
+      if(exists)continue;
+      state.records.push({
+        id:"legacy_"+legacyId,
+        legacySourceId:legacyId,
+        type:legacyType(x.type),
+        title:x.title||"",
+        text:x.text||"",
+        tags:Array.isArray(x.tags)?x.tags:[],
+        favorite:false,
+        createdAt:legacyIso(x.createdAt)
+      });
+      addedRecords++;
+    }
+    state.records.sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+
+    for(const d of planSnap.docs){
+      const x=d.data();
+      const key=x.periodKey||x.key||x.baseDate||"";
+      const exists=state.plans.some(p=>p.legacySourceId===d.id || (p.kind===x.kind && p.key===key));
+      if(exists)continue;
+      const item={
+        id:"legacy_"+d.id,
+        legacySourceId:d.id,
+        kind:x.kind||"day",
+        key,
+        period:x.period||"",
+        baseDate:x.baseDate||"",
+      };
+      if(item.kind==="week"){
+        item.weekItems=Array.isArray(x.weekItems)?x.weekItems.map(v=>String(v??"")).slice(0,5):[];
+        while(item.weekItems.length<5)item.weekItems.push("");
+      }else{
+        item.goal=x.goal||"";
+        item.tasks=Array.isArray(x.tasks)?x.tasks:[];
+        item.memo=x.memo||"";
+      }
+      state.plans.push(item);
+      addedPlans++;
+    }
+
+    for(const d of dailySnap.docs){
+      const x=d.data();
+      const date=x.date||d.id;
+      if(!date)continue;
+      const oldDaily={
+        date,
+        gratitude:x.gratitude??x.thanks??"",
+        praise:x.praise??x.reflect??"",
+        reflection:x.reflection??x.tomorrow??"",
+        favorite:false,
+        createdAt:legacyIso(x.createdAt||x.updatedAt,date),
+        legacySourceId:d.id
+      };
+      if(!state.daily[date]){
+        state.daily[date]=oldDaily;
+        addedDaily++;
+      }else{
+        const cur=state.daily[date];
+        let changed=false;
+        for(const k of ["gratitude","praise","reflection"]){
+          if(!cur[k]&&oldDaily[k]){cur[k]=oldDaily[k];changed=true}
+        }
+        if(changed)mergedDaily++;
+      }
+    }
+
+    localStorage.setItem(STORE,JSON.stringify(state));
+    await syncStateToCloud();
+    await createCloudSnapshot(state,"after_legacy_recovery");
+    renderEverything();
+
+    const total=addedRecords+addedPlans+addedDaily;
+    $("backupStatus").textContent=`예전 기록 복구 완료 · 기록 ${addedRecords} · 계획 ${addedPlans} · 감칭반 ${addedDaily}${mergedDaily?` · 기존 날짜 병합 ${mergedDaily}`:""}`;
+    alert(`예전 기록을 가져왔어요.\n\n한 줄 기록: ${addedRecords}개\n계획: ${addedPlans}개\n감칭반: ${addedDaily}개${mergedDaily?`\n기존 감칭반에 빈 항목 보충: ${mergedDaily}일`:""}\n\n현재 기록은 삭제하지 않았습니다.`);
+  }catch(e){
+    console.error(e);
+    alert("예전 기록 가져오기에 실패했어요.\n현재 기록은 변경 전 스냅샷으로 보관되어 있습니다.\n\n"+e.message);
+  }finally{
+    btn.disabled=false; btn.textContent=oldText;
+  }
+}
+$("recoverLegacy").onclick=recoverLegacyFirebase;
+
 $("backupFile").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=data.state||data;if(!incoming||typeof incoming!=="object")throw new Error("올바른 기록노트 백업 파일이 아니에요.");if(!confirm(`백업 파일의 기록 ${stateCount(incoming)}개를 복원할까요? 현재 상태는 먼저 Firebase 스냅샷으로 보관합니다.`)){e.target.value="";return}await createCloudSnapshot(state,"before_restore");state={...emptyState(),...incoming};if(!Array.isArray(state.records))state.records=[];if(!Array.isArray(state.plans))state.plans=[];if(!Array.isArray(state.fourL))state.fourL=[];if(!state.daily)state.daily={};if(!state.monthLines)state.monthLines={};if(!Array.isArray(state.moods))state.moods=[];if(!state.highlights)state.highlights={};if(!state.highlightCandidates)state.highlightCandidates={};localStorage.setItem(STORE,JSON.stringify(state));await syncStateToCloud();renderEverything();toast("백업 파일을 복원했어요");$("backupPanel").classList.add("hidden")}catch(err){alert("백업 복원에 실패했어요: "+err.message)}e.target.value=""};
 
 onAuthStateChanged(auth,async u=>{
