@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="ko">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f8f6ff">
@@ -543,6 +546,15 @@ button.starButton.on,.starButton.on,.dailyPartStar.on,.fourLPartStar.on,.monthLi
 
 /* v23 final tweaks */
 #moodScoreGrid .moodScore.active{color:#202033!important}
+
+/* online v24 authentication layer */
+.authOverlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:grid;place-items:center;padding:20px}
+.authOverlay.hidden{display:none!important}
+.authBox{width:min(440px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 12px 40px #5a46601c}
+.authBox h1{margin:0 0 6px}
+.authBox input{width:100%;margin-top:9px}
+.authBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.authMsg{min-height:20px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.4}
 </style>
 </head>
 <body>
@@ -552,11 +564,11 @@ button.starButton.on,.starButton.on,.dailyPartStar.on,.fourLPartStar.on,.monthLi
     <p class="muted">같은 계정으로 로그인하면 모바일과 PC에서 기록이 자동으로 동기화돼요.</p>
     <input id="authEmail" type="email" autocomplete="email" placeholder="이메일">
     <input id="authPassword" type="password" autocomplete="current-password" placeholder="비밀번호 (6자 이상)">
-    <div class="authBtns"><button id="loginBtn" class="primary">로그인</button><button id="signupBtn" class="secondary">처음 가입</button></div>
+    <div class="authBtns"><button id="loginBtn" type="button" class="primary">로그인</button><button id="signupBtn" type="button" class="secondary">처음 가입</button></div>
     <div id="authMsg" class="authMsg"></div>
   </div>
 </section><div id="pullRefreshIndicator">↻ 아래로 당겨 새로고침</div><main>
-<div class="top"><div><div class="brand">기록노트</div><div id="cloudStatus" class="tiny">☁️ 동기화 준비 중…</div></div><div class="headerActions"><button id="backupNow" class="secondary small" type="button">백업 관리</button><button id="logout" class="secondary small" type="button">로그아웃</button></div></div>
+<div class="top"><div><div class="brand">기록노트</div><div class="tiny" style="opacity:.55">online v24</div><div id="cloudStatus" class="tiny">☁️ 동기화 준비 중…</div></div><div class="headerActions"><button id="backupNow" class="secondary small" type="button">백업 관리</button><button id="logout" class="secondary small" type="button">로그아웃</button></div></div>
 <div id="backupPanel" class="card hidden"><div class="top"><div><h2>☁️ 백업 관리</h2><div id="backupStatus" class="tiny">백업 상태를 확인하는 중…</div>
 
 <div class="top"><div><div class="brand">기록노트</div><div class="tiny">이 기기에만 저장되는 오프라인 보기용</div></div><div class="headerActions"><span class="offlinePill">오프라인</span><button id="resetAll" class="secondary small" type="button">초기화</button></div></div>
