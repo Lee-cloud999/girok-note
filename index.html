@@ -223,6 +223,13 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 .authBox{width:min(440px,100%);background:#fff;border:1px solid var(--line);border-radius:24px;padding:22px;box-shadow:0 12px 40px #5a46601c}
 .authBox h1{margin:0 0 6px}.authBox input{width:100%;margin-top:9px}.authBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .authMsg{min-height:20px;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.4}
+
+/* v14: smaller visible stars, keep comfortable tap target */
+.dailyPart{position:relative;padding-right:46px;margin:10px 0}
+.dailyPartStar{position:absolute;right:0;top:50%;transform:translateY(-50%);width:38px;height:38px;min-width:38px;padding:0;font-size:18px;line-height:1}
+.moodStar{width:38px;height:38px;min-width:38px;padding:0;font-size:18px;line-height:1}
+.monthPieceActions{display:flex;gap:8px;margin-top:12px}.monthPieceActions button{flex:1}
+.monthPieceSelected{margin-top:18px}.monthPieceCard{padding:14px;border:1px solid var(--line);border-radius:16px;background:#fff;margin-top:9px}
 </style>
 
 <link rel="manifest" href="manifest.webmanifest">
@@ -378,12 +385,13 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
 <section id="tabFavorites" class="hidden">
   <div class="card" style="background:var(--lav1)">
     <h1>보관함</h1>
-    <p class="muted">별표한 한 줄 기록, 4L, 감칭반을 모아볼 수 있어요.</p>
+    <p class="muted">별표한 한 줄 기록, 4L, 감칭반, 기분 기록을 모아볼 수 있어요.</p>
     <div class="favoriteTabs">
       <button class="active" data-fav-filter="all">전체</button>
       <button data-fav-filter="record">한 줄 기록</button>
       <button data-fav-filter="fourl">4L</button>
       <button data-fav-filter="daily">감칭반</button>
+      <button data-fav-filter="mood">기분</button>
     </div>
   </div>
   <div id="favoriteRecords"></div>
@@ -395,7 +403,7 @@ button{font:inherit;font-weight:800;border:0;border-radius:15px;padding:12px 14p
     <p class="muted">별표한 기록을 다시 만나고, 매달 기억하고 싶은 순간을 골라보세요.</p>
   </div>
   <div class="card randomCard"><div class="top"><div><h2 style="margin:0">🎲 랜덤 기록</h2><span class="tiny">별표한 기록을 다시 만나보세요.</span></div></div><div id="randomFavoriteBody" class="randomBody muted">별표한 기록이 있으면 여기에서 랜덤으로 보여드려요.</div><div class="randomNav"><button id="randomPrev" class="secondary">‹</button><button id="randomNext" class="primary">다른 기록 보기</button><button id="randomNextArrow" class="secondary">›</button></div></div>
-  <div class="card"><div class="monthLineHead"><button id="highlightPrev" class="secondary monthLineArrow">‹</button><h2 id="highlightTitle">🏆 월간 하이라이트</h2><button id="highlightNext" class="secondary monthLineArrow">›</button></div><p class="muted">① 마음에 드는 기록을 후보함에 담고 → ② 후보 중 TOP 10의 순서를 정해보세요. 후보는 10개보다 많이 담아도 돼요.</p><div class="highlightToolbar"><button id="highlightModeCandidates" class="primary">💜 후보 고르기</button><button id="highlightModeRanking" class="secondary">🏆 TOP 10 정하기</button></div><div id="highlightRows"></div></div>
+  <div class="card"><div class="monthLineHead"><button id="highlightPrev" class="secondary monthLineArrow">‹</button><h2 id="highlightTitle">💎 이달의 조각</h2><button id="highlightNext" class="secondary monthLineArrow">›</button></div><p class="muted">이번 달 기록을 한 장씩 다시 만나보세요. 마음에 남는 기록만 이달의 조각으로 남길 수 있어요.</p><div id="highlightRows"></div></div>
 </section>
 
 </main>
@@ -466,11 +474,11 @@ async function syncStateToCloud(){
       console.warn("Protected cloud data from empty overwrite");
       return false;
     }
-    if(remoteState&&remoteCount>0)await createCloudSnapshot(remoteState,"auto");
+    if(remoteState&&remoteCount>0){try{await createCloudSnapshot(remoteState,"auto")}catch(snapshotErr){console.warn("snapshot skipped",snapshotErr)}}
     await setDoc(ref,{state,updatedAt:serverTimestamp(),schemaVersion:12},{merge:true});
     $("cloudStatus").textContent="☁️ "+currentUser.email+" · 동기화됨";
     return true;
-  }catch(e){$("cloudStatus").textContent="⚠️ 동기화 오류";console.error(e);return false}
+  }catch(e){$("cloudStatus").textContent="⚠️ 동기화 오류 · "+(e.code||e.message||"unknown");console.error(e);return false}
 }
 async function loadCloudState(){
   const ref=doc(db,"users",currentUser.uid,"giroknote","state");
@@ -487,7 +495,7 @@ async function loadCloudState(){
     await setDoc(ref,{state,updatedAt:serverTimestamp(),schemaVersion:12},{merge:true});
   }
   cloudReady=true;
-  if(stateCount(state)>0)await createCloudSnapshot(state,"auto");
+  if(stateCount(state)>0){try{await createCloudSnapshot(state,"auto")}catch(snapshotErr){console.warn("snapshot skipped",snapshotErr)}}
   $("cloudStatus").textContent="☁️ "+currentUser.email+" · 동기화됨";
 }
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -607,17 +615,11 @@ document.querySelectorAll("[data-plan]").forEach(b=>b.onclick=()=>{planKind=b.da
 $("savePlan").onclick=()=>{const d=dateFrom($("planBaseDate").value),key=planKey(planKind,d);let p=state.plans.find(x=>x.kind===planKind&&x.key===key);const data={id:p?.id||id(),kind:planKind,key,period:$("period").value,baseDate:$("planBaseDate").value};if(planKind==="week"){data.weekItems=Array.from(document.querySelectorAll("[data-week]")).map(x=>x.value.trim());if(data.weekItems.every(x=>!x))return alert("주간 계획을 적어주세요.")}else{data.goal=$("goal").value.trim();data.tasks=$("tasks").value.split("\n").map(x=>x.trim()).filter(Boolean);data.memo=$("memo").value.trim();if(!data.goal&&!data.tasks.length&&!data.memo)return alert("계획을 적어주세요.")}if(p)Object.assign(p,data);else state.plans.unshift(data);saveState();renderPlans();renderOverview();renderStats();toast("계획을 저장했어요")}
 function renderPlans(){const a=state.plans.filter(p=>p.kind===planKind);$("plans").innerHTML=a.length?a.map(p=>`<div class="planCard"><b>${esc(p.period)}</b>${p.kind==="week"?p.weekItems.map((x,i)=>x?`<p><b>${i+1}주</b><br>${esc(x)}</p>`:"").join(""):`${p.goal?`<p><b>핵심 목표</b><br>${esc(p.goal)}</p>`:""}${p.tasks?.length?`<p><b>할 일</b><br>${p.tasks.map(esc).join("<br>")}</p>`:""}${p.memo?`<p><b>메모</b><br>${esc(p.memo)}</p>`:""}`}<div class="actions recordActions"><button class="small danger" data-del-plan="${p.id}">삭제</button></div></div>`).join(""):'<div class="muted">아직 저장된 계획이 없어요.</div>';document.querySelectorAll("[data-del-plan]").forEach(b=>b.onclick=()=>{state.plans=state.plans.filter(p=>p.id!==b.dataset.delPlan);saveState();renderPlans();renderOverview();renderStats()})}
 
-$("saveDaily").onclick=()=>{const k=todayKey();const prev=state.daily[k]||{};state.daily[k]={date:k,gratitude:$("gratitude").value.trim(),praise:$("praise").value.trim(),reflection:$("reflection").value.trim(),favorite:prev.favorite||false,createdAt:prev.createdAt||new Date().toISOString()};saveState();$("gratitude").value="";$("praise").value="";$("reflection").value="";renderDailyList();renderCalendar();renderSelectedDaily();renderUnifiedSearch();renderStats();toast("감칭반을 저장했어요")}
-function dailyCard(d){return `<div class="record"><div class="calendarSelectedHead"><div class="recordTitle">${esc(d.date)}</div><span class="calendarTypeBadge">🌙 감칭반</span></div>${d.gratitude?`<div class="recordBody"><b>감사</b><br>${esc(d.gratitude)}</div>`:""}${d.praise?`<div class="recordBody"><b>칭찬</b><br>${esc(d.praise)}</div>`:""}${d.reflection?`<div class="recordBody"><b>반성</b><br>${esc(d.reflection)}</div>`:""}<div class="actions recordActions"><button class="small starButton ${d.favorite?"on":""}" data-fav-daily="${esc(d.date)}">${d.favorite?"★":"☆"}</button></div></div>`}
-
-function wireDailyFavorite(){
-  document.querySelectorAll("[data-fav-daily]").forEach(b=>b.onclick=()=>{
-    const d=state.daily[b.dataset.favDaily]; if(!d)return;
-    d.favorite=!d.favorite; saveState();
-    renderDailyList(); renderSelectedDaily(); renderCalendar(); renderFavorites(); renderUnifiedSearch();
-    toast(d.favorite?"보관함에 저장했어요":"보관함에서 뺐어요");
-  });
-}
+$("saveDaily").onclick=()=>{const k=todayKey();const prev=state.daily[k]||{};state.daily[k]={...prev,date:k,gratitude:$("gratitude").value.trim(),praise:$("praise").value.trim(),reflection:$("reflection").value.trim(),createdAt:prev.createdAt||new Date().toISOString()};saveState();$("gratitude").value="";$("praise").value="";$("reflection").value="";renderDailyList();renderCalendar();renderSelectedDaily();renderUnifiedSearch();renderStats();toast("감칭반을 저장했어요")}
+function dailyFav(d,part){const key={gratitude:"favoriteGratitude",praise:"favoritePraise",reflection:"favoriteReflection"}[part];return typeof d[key]==="boolean"?d[key]:!!d.favorite}
+function dailyPart(d,part,label,text){if(!text)return "";const on=dailyFav(d,part);return `<div class="recordBody dailyPart"><b>${label}</b><br>${esc(text)}<button class="small starButton dailyPartStar ${on?"on":""}" data-fav-daily-part="${esc(d.date)}" data-part="${part}">${on?"★":"☆"}</button></div>`}
+function dailyCard(d){return `<div class="record"><div class="calendarSelectedHead"><div class="recordTitle">${esc(d.date)}</div><span class="calendarTypeBadge">🌙 감칭반</span></div>${dailyPart(d,"gratitude","감사",d.gratitude)}${dailyPart(d,"praise","칭찬",d.praise)}${dailyPart(d,"reflection","반성",d.reflection)}</div>`}
+function wireDailyFavorite(){document.querySelectorAll("[data-fav-daily-part]").forEach(b=>b.onclick=()=>{const d=state.daily[b.dataset.favDailyPart];if(!d)return;const key={gratitude:"favoriteGratitude",praise:"favoritePraise",reflection:"favoriteReflection"}[b.dataset.part];d[key]=!dailyFav(d,b.dataset.part);saveState();renderDailyList();renderSelectedDaily();renderCalendar();renderFavorites();renderUnifiedSearch();renderRandomFavorite();toast(d[key]?"보관함에 저장했어요":"보관함에서 뺐어요")})}
 
 function renderDailyList(){
   if(!$("dailyLogList"))return;
@@ -731,20 +733,13 @@ function renderFourL(){
 let favoriteFilter="all";
 function renderFavorites(){
   const out=[];
-  if(favoriteFilter==="all"||favoriteFilter==="record"){
-    state.records.filter(r=>r.favorite).forEach(r=>out.push({kind:"record",date:r.createdAt||"",html:recordCard(r,"browse")}));
-  }
-  if(favoriteFilter==="all"||favoriteFilter==="fourl"){
-    state.fourL.filter(x=>x.favorite).forEach(x=>out.push({kind:"fourl",date:x.date||"",html:fourLCard(x)}));
-  }
-  if(favoriteFilter==="all"||favoriteFilter==="daily"){
-    Object.values(state.daily).filter(d=>d.favorite).forEach(d=>out.push({kind:"daily",date:d.date||"",html:dailyCard(d)}));
-  }
-  out.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-  $("favoriteRecords").innerHTML=out.length?out.map(x=>x.html).join(""):'<div class="card muted">아직 별표한 기록이 없어요.</div>';
-  wireRecordActions();
-  document.querySelectorAll("#favoriteRecords [data-fav-fourl]").forEach(b=>b.onclick=()=>{const x=state.fourL.find(v=>v.id===b.dataset.favFourl);if(!x)return;x.favorite=!x.favorite;saveState();renderFavorites();renderFourL();renderBrowseFourL()});
-  wireDailyFavorite();
+  if(favoriteFilter==="all"||favoriteFilter==="record")state.records.filter(r=>r.favorite).forEach(r=>out.push({date:r.createdAt||"",html:recordCard(r,"browse")}));
+  if(favoriteFilter==="all"||favoriteFilter==="fourl")state.fourL.filter(x=>x.favorite).forEach(x=>out.push({date:x.date||"",html:fourLCard(x)}));
+  if(favoriteFilter==="all"||favoriteFilter==="daily")Object.values(state.daily).filter(d=>["gratitude","praise","reflection"].some(p=>d[p]&&dailyFav(d,p))).forEach(d=>out.push({date:d.date||"",html:dailyCard(d)}));
+  if(favoriteFilter==="all"||favoriteFilter==="mood")state.moods.filter(x=>x.favorite).forEach(x=>out.push({date:x.date||"",html:`<div class="record"><div class="calendarSelectedHead"><div class="recordTitle">${esc(x.date)} · ${esc(x.time||"")}</div><span class="calendarTypeBadge">🌈 기분</span></div><div class="recordBody"><span class="moodFace">${x.mood}</span> <b>${esc(moodName(x.mood))} · ${x.score}/10</b>${x.note?`<br>${esc(x.note)}`:""}</div><div class="actions recordActions"><button class="small starButton moodStar on" data-fav-mood-archive="${x.id}">★</button></div></div>`}));
+  out.sort((a,b)=>String(b.date).localeCompare(String(a.date)));$("favoriteRecords").innerHTML=out.length?out.map(x=>x.html).join(""):`<div class="card muted">아직 별표한 기록이 없어요.</div>`;
+  wireRecordActions();document.querySelectorAll("#favoriteRecords [data-fav-fourl]").forEach(b=>b.onclick=()=>{const x=state.fourL.find(v=>v.id===b.dataset.favFourl);if(!x)return;x.favorite=!x.favorite;saveState();renderFavorites();renderFourL();renderBrowseFourL()});wireDailyFavorite();
+  document.querySelectorAll("[data-fav-mood-archive]").forEach(b=>b.onclick=()=>{const x=state.moods.find(v=>v.id===b.dataset.favMoodArchive);if(!x)return;x.favorite=false;saveState();renderFavorites();renderMoodDay();renderRandomFavorite()});
   document.querySelectorAll("[data-fav-filter]").forEach(b=>{b.classList.toggle("active",b.dataset.favFilter===favoriteFilter);b.onclick=()=>{favoriteFilter=b.dataset.favFilter;renderFavorites()}});
 }
 
@@ -791,11 +786,12 @@ function renderMoodPicker(){
   $('moodScoreText').textContent=selectedMoodScore?`· ${selectedMoodScore}/10`:'· 선택해주세요';
 }
 function renderMoodDay(){
-  if(!$('moodLogs'))return; renderMoodPicker(); const k=todayKey(moodDate);
+  if(!$("moodLogs"))return; renderMoodPicker(); const k=todayKey(moodDate);
   const a=state.moods.filter(x=>x.date===k).sort((a,b)=>String(a.time).localeCompare(String(b.time)));
-  $('moodCount').textContent=`${a.length}개`;
-  $('moodLogs').innerHTML=a.length?a.map(x=>`<div class="moodLog"><div class="top"><div><span class="moodFace">${x.mood}</span> <b>${esc(moodName(x.mood))} · ${x.score}/10</b><div class="tiny">${esc(x.time||'')}</div></div><button class="small danger" data-del-mood="${x.id}">삭제</button></div>${x.note?`<div class="moodNote">${esc(x.note)}</div>`:''}</div>`).join(''):'<p class="muted">아직 기록한 기분이 없어요.</p>';
-  document.querySelectorAll('[data-del-mood]').forEach(b=>b.onclick=()=>{if(!confirm('이 기분 기록을 삭제할까요?'))return;state.moods=state.moods.filter(x=>x.id!==b.dataset.delMood);saveState();renderMoodDay();renderMoodMonth()});
+  $("moodCount").textContent=`${a.length}개`;
+  $("moodLogs").innerHTML=a.length?a.map(x=>`<div class="moodLog"><div class="top"><div><span class="moodFace">${x.mood}</span> <b>${esc(moodName(x.mood))} · ${x.score}/10</b><div class="tiny">${esc(x.time||"")}</div></div><div style="display:flex;gap:6px"><button class="small starButton moodStar ${x.favorite?"on":""}" data-fav-mood="${x.id}">${x.favorite?"★":"☆"}</button><button class="small danger" data-del-mood="${x.id}">삭제</button></div></div>${x.note?`<div class="moodNote">${esc(x.note)}</div>`:""}</div>`).join(""):`<p class="muted">아직 기록한 기분이 없어요.</p>`;
+  document.querySelectorAll("[data-fav-mood]").forEach(b=>b.onclick=()=>{const x=state.moods.find(v=>v.id===b.dataset.favMood);if(!x)return;x.favorite=!x.favorite;saveState();renderMoodDay();renderFavorites();renderRandomFavorite();toast(x.favorite?"보관함에 저장했어요":"보관함에서 뺐어요")});
+  document.querySelectorAll("[data-del-mood]").forEach(b=>b.onclick=()=>{if(!confirm("이 기분 기록을 삭제할까요?"))return;state.moods=state.moods.filter(x=>x.id!==b.dataset.delMood);saveState();renderMoodDay();renderMoodMonth();renderFavorites();renderRandomFavorite()});
 }
 function renderMoodMonth(){
   if(!$('moodMonthTitle'))return; const y=moodMonthCursor.getFullYear(),m=moodMonthCursor.getMonth(),prefix=`${y}-${String(m+1).padStart(2,'0')}-`;
@@ -805,36 +801,30 @@ function renderMoodMonth(){
   $('moodMonthDays').innerHTML=days.length?days.map(d=>{const es=a.filter(x=>x.date===d).sort((a,b)=>String(a.time).localeCompare(String(b.time)));return `<button class="moodDayChip" data-mood-day="${d}"><b>${Number(d.slice(-2))}일</b> ${es.map(x=>x.mood).join(' ')}</button>`}).join(''):'<span class="muted">이 달의 기분 기록이 아직 없어요.</span>';
   document.querySelectorAll('[data-mood-day]').forEach(b=>b.onclick=()=>{const [y,m,d]=b.dataset.moodDay.split('-').map(Number);moodDate=new Date(y,m-1,d);renderMoodDay();window.scrollTo({top:0,behavior:'smooth'})});
 }
-$('saveMood').onclick=()=>{if(!selectedMood)return alert('표정 이모지를 선택해주세요.');if(!selectedMoodScore)return alert('기분 강도를 선택해주세요.');const now=new Date(),same=todayKey(now)===todayKey(moodDate);const time=same?now.toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'}):'기록';state.moods.push({id:id(),date:todayKey(moodDate),time,mood:selectedMood,score:selectedMoodScore,note:$('moodNote').value.trim()});saveState();$('moodNote').value='';selectedMood=null;selectedMoodScore=null;renderMoodDay();renderMoodMonth();toast('기분을 기록했어요')};
+$('saveMood').onclick=()=>{if(!selectedMood)return alert('표정 이모지를 선택해주세요.');if(!selectedMoodScore)return alert('기분 강도를 선택해주세요.');const now=new Date(),same=todayKey(now)===todayKey(moodDate);const time=same?now.toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit'}):'기록';state.moods.push({id:id(),date:todayKey(moodDate),time,mood:selectedMood,score:selectedMoodScore,note:$('moodNote').value.trim(),favorite:false});saveState();$('moodNote').value='';selectedMood=null;selectedMoodScore=null;renderMoodDay();renderMoodMonth();toast('기분을 기록했어요')};
 $('moodPrevDay').onclick=()=>{moodDate=new Date(moodDate.getFullYear(),moodDate.getMonth(),moodDate.getDate()-1);renderMoodDay()};
 $('moodNextDay').onclick=()=>{moodDate=new Date(moodDate.getFullYear(),moodDate.getMonth(),moodDate.getDate()+1);renderMoodDay()};
 $('moodPrevMonth').onclick=()=>{moodMonthCursor=new Date(moodMonthCursor.getFullYear(),moodMonthCursor.getMonth()-1,1);renderMoodMonth()};
 $('moodNextMonth').onclick=()=>{moodMonthCursor=new Date(moodMonthCursor.getFullYear(),moodMonthCursor.getMonth()+1,1);renderMoodMonth()};
 
 // v11 기억조각 - 랜덤 기록
-function favoritePool(){const a=[];state.records.filter(x=>x.favorite).forEach(x=>a.push({key:'r:'+x.id,label:x.type,date:(x.createdAt||'').slice(0,10),text:x.title?`${x.title}\n${x.text}`:x.text}));state.fourL.filter(x=>x.favorite).forEach(x=>a.push({key:'f:'+x.id,label:'🔄 4L',date:x.date,text:[x.liked&&`❤️ ${x.liked}`,x.learned&&`📘 ${x.learned}`,x.lacked&&`🪞 ${x.lacked}`,x.longed&&`🌱 ${x.longed}`].filter(Boolean).join('\n')}));Object.values(state.daily).filter(x=>x.favorite).forEach(x=>a.push({key:'d:'+x.date,label:'🌙 감칭반',date:x.date,text:[x.gratitude&&`감사 · ${x.gratitude}`,x.praise&&`칭찬 · ${x.praise}`,x.reflection&&`반성 · ${x.reflection}`].filter(Boolean).join('\n')}));return a}
+function favoritePool(){const a=[];state.records.filter(x=>x.favorite).forEach(x=>a.push({key:"r:"+x.id,label:x.type,date:(x.createdAt||"").slice(0,10),text:x.title?`${x.title}\n${x.text}`:x.text}));state.fourL.filter(x=>x.favorite).forEach(x=>a.push({key:"f:"+x.id,label:"🔄 4L",date:x.date,text:[x.liked&&`❤️ ${x.liked}`,x.learned&&`📘 ${x.learned}`,x.lacked&&`🪞 ${x.lacked}`,x.longed&&`🌱 ${x.longed}`].filter(Boolean).join("\n")}));Object.values(state.daily).forEach(d=>[["gratitude","감사"],["praise","칭찬"],["reflection","반성"]].forEach(([p,l])=>{if(d[p]&&dailyFav(d,p))a.push({key:`d:${d.date}:${p}`,label:`🌙 감칭반 · ${l}`,date:d.date,text:d[p]})}));state.moods.filter(x=>x.favorite).forEach(x=>a.push({key:"mo:"+x.id,label:`🌈 ${moodName(x.mood)} ${x.mood}`,date:x.date,text:`강도 ${x.score}/10${x.note?`\n${x.note}`:""}`}));return a}
 function showRandomItem(item){$('randomFavoriteBody').classList.remove('muted');$('randomFavoriteBody').innerHTML=item?`<div class="tiny">${esc(item.label)} · ${esc(item.date)}</div><div style="margin-top:8px">${esc(item.text)}</div>`:'<span class="muted">아직 별표한 기록이 없어요.</span>'}
 function renderRandomFavorite(){if(!$('randomFavoriteBody'))return;const pool=favoritePool();if(!pool.length){randomHistory=[];randomIndex=-1;showRandomItem(null);return}if(randomIndex>=0&&randomHistory[randomIndex]){const cur=pool.find(x=>x.key===randomHistory[randomIndex]);if(cur){showRandomItem(cur);return}}pickRandomFavorite()}
 function pickRandomFavorite(){const pool=favoritePool();if(!pool.length)return showRandomItem(null);const current=randomIndex>=0?randomHistory[randomIndex]:null;let choices=pool.filter(x=>x.key!==current);if(!choices.length)choices=pool;const item=choices[Math.floor(Math.random()*choices.length)];randomHistory=randomHistory.slice(0,randomIndex+1);randomHistory.push(item.key);randomIndex=randomHistory.length-1;showRandomItem(item)}
 $('randomNext').onclick=pickRandomFavorite;$('randomNextArrow').onclick=pickRandomFavorite;$('randomPrev').onclick=()=>{if(randomIndex>0){randomIndex--;const item=favoritePool().find(x=>x.key===randomHistory[randomIndex]);if(item)showRandomItem(item)}};
 
-// v12 기억조각 - 후보함에서 골라 만드는 월간 TOP 10
-let highlightMode="candidates";
-if(!state.highlightCandidates)state.highlightCandidates={};if(!state.highlights)state.highlights={};
+// v14 기억조각 - 한 장씩 고르는 이달의 조각
+let monthPieceIndex=0;
 function hmk(){return `${highlightCursor.getFullYear()}-${String(highlightCursor.getMonth()+1).padStart(2,"0")}`}
 function href(k,id){return `${k}:${id}`}
-function hcands(){const mk=hmk(),a=[];state.records.filter(r=>String(r.createdAt||"").slice(0,7)===mk).forEach(r=>a.push({ref:href("r",r.id),kind:"한 줄 기록",date:String(r.createdAt).slice(0,10),text:r.text||r.title||""}));state.fourL.filter(x=>String(x.date||"").startsWith(mk)).forEach(x=>a.push({ref:href("f",x.id),kind:"4L",date:x.date,text:x.liked||x.learned||x.lacked||x.longed||""}));Object.values(state.daily).filter(d=>String(d.date||"").startsWith(mk)).forEach(d=>a.push({ref:href("d",d.date),kind:"감칭반",date:d.date,text:d.gratitude||d.praise||d.reflection||""}));Object.entries(state.monthLines||{}).filter(([d,v])=>d.startsWith(mk)&&String(v||"").trim()).forEach(([d,v])=>a.push({ref:href("m",d),kind:"하루한줄",date:d,text:v}));return a.sort((x,y)=>String(y.date).localeCompare(String(x.date)))}
-function hsel(){const k=hmk();if(!Array.isArray(state.highlightCandidates[k]))state.highlightCandidates[k]=[];return state.highlightCandidates[k]}
+function fmtRecordTime(v){if(!v)return "";const d=new Date(v);if(Number.isNaN(d.getTime()))return "";return d.toLocaleTimeString("ko-KR",{hour:"numeric",minute:"2-digit"})}
+function hcands(){const mk=hmk(),a=[];state.records.filter(r=>String(r.createdAt||"").slice(0,7)===mk).forEach(r=>a.push({ref:href("r",r.id),kind:"한 줄 기록",date:String(r.createdAt).slice(0,10),time:fmtRecordTime(r.createdAt),text:r.text||r.title||""}));state.fourL.filter(x=>String(x.date||"").startsWith(mk)).forEach(x=>a.push({ref:href("f",x.id),kind:"4L",date:x.date,time:"",text:[x.liked,x.learned,x.lacked,x.longed].filter(Boolean).join(" · ")}));Object.values(state.daily).filter(d=>String(d.date||"").startsWith(mk)).forEach(d=>{if(d.gratitude)a.push({ref:href("dg",d.date),kind:"감칭반 [감사]",date:d.date,time:"",text:d.gratitude});if(d.praise)a.push({ref:href("dp",d.date),kind:"감칭반 [칭찬]",date:d.date,time:"",text:d.praise});if(d.reflection)a.push({ref:href("dr",d.date),kind:"감칭반 [반성]",date:d.date,time:"",text:d.reflection})});Object.entries(state.monthLines||{}).filter(([d,v])=>d.startsWith(mk)&&String(v||"").trim()).forEach(([d,v])=>a.push({ref:href("m",d),kind:"하루한줄",date:d,time:"",text:v}));return a.sort((x,y)=>`${y.date} ${y.time}`.localeCompare(`${x.date} ${x.time}`))}
 function hranks(){const k=hmk();if(!Array.isArray(state.highlights[k]))state.highlights[k]=[];return state.highlights[k]}
-function hitem(ref){return hcands().find(x=>x.ref===ref)}
-function hemo(k){return k==="4L"?"🔄":k==="감칭반"?"🌙":k==="하루한줄"?"📖":"✍️"}
-function htxt(t){t=String(t||"").replace(/\s+/g," ").trim();return t.length>90?t.slice(0,90)+"…":t}
-function renderHighlights(){if(!$("highlightRows"))return;const k=hmk(),all=hcands(),sel=hsel(),ranks=hranks().filter(r=>all.some(x=>x.ref===r));state.highlights[k]=ranks;$("highlightTitle").textContent=`🏆 ${highlightCursor.getFullYear()}년 ${highlightCursor.getMonth()+1}월 하이라이트`;$("highlightModeCandidates").className=highlightMode==="candidates"?"primary":"secondary";$("highlightModeRanking").className=highlightMode==="ranking"?"primary":"secondary";
-if(highlightMode==="candidates"){const picked=sel.map(hitem).filter(Boolean),avail=all.filter(x=>!sel.includes(x.ref));$("highlightRows").innerHTML=`<div class="highlightSectionTitle"><h3>💜 후보함</h3><span class="tiny">${picked.length}개 담음</span></div>${picked.length?picked.map(x=>`<div class="highlightCandidate selected"><div class="hcMeta">${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}</div><div class="hcText">${esc(htxt(x.text))}</div><div class="hcActions"><button class="small danger" data-hremove="${esc(x.ref)}">후보 빼기</button></div></div>`).join(""):'<div class="highlightEmpty">아직 후보가 없어요.<br>아래에서 기억하고 싶은 순간을 담아보세요 💜</div>'}<div class="highlightSectionTitle"><h3>✨ 이번 달 기록</h3><span class="tiny">${avail.length}개</span></div>${avail.length?avail.map(x=>`<div class="highlightCandidate"><div class="hcMeta">${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}</div><div class="hcText">${esc(htxt(x.text))}</div><div class="hcActions"><button class="small primary" data-hadd="${esc(x.ref)}">＋ 후보에 담기</button></div></div>`).join(""):'<div class="highlightEmpty">후보로 고를 다른 기록이 없어요.</div>'}`}
-else{const ri=ranks.map(hitem).filter(Boolean),un=sel.map(hitem).filter(x=>x&&!ranks.includes(x.ref)),med=["🥇","🥈","🥉"];$("highlightRows").innerHTML=`<div class="highlightSectionTitle"><h3>🏆 나의 TOP 10</h3><span class="tiny">${ri.length}/10</span></div>${ri.length?ri.map((x,i)=>`<div class="highlightRankCard"><div class="rankBadge">${med[i]||`${i+1}위`}</div><div class="rankText"><div class="rankMeta">${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}</div>${esc(htxt(x.text))}</div><div class="rankBtns"><button class="small" data-hup="${esc(x.ref)}" ${i===0?"disabled":""}>↑</button><button class="small" data-hdown="${esc(x.ref)}" ${i===ri.length-1?"disabled":""}>↓</button><button class="small danger" data-hrm="${esc(x.ref)}">빼기</button></div></div>`).join(""):'<div class="highlightEmpty">TOP 10이 비어 있어요.<br>후보함에서 기억을 올려보세요 🏆</div>'}<div class="highlightSectionTitle"><h3>💜 후보함에서 고르기</h3><span class="tiny">${un.length}개</span></div>${un.length?un.map(x=>`<div class="highlightCandidate"><div class="hcMeta">${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}</div><div class="hcText">${esc(htxt(x.text))}</div><div class="hcActions"><button class="small primary" data-htop="${esc(x.ref)}">TOP 10에 넣기</button></div></div>`).join(""):'<div class="highlightEmpty">순위를 정할 후보가 더 없어요.</div>'}`}
-document.querySelectorAll("[data-hadd]").forEach(b=>b.onclick=()=>{hsel().push(b.dataset.hadd);saveState();renderHighlights()});document.querySelectorAll("[data-hremove]").forEach(b=>b.onclick=()=>{state.highlightCandidates[k]=hsel().filter(x=>x!==b.dataset.hremove);state.highlights[k]=hranks().filter(x=>x!==b.dataset.hremove);saveState();renderHighlights()});document.querySelectorAll("[data-htop]").forEach(b=>b.onclick=()=>{const a=hranks();if(a.length>=10)return alert("TOP 10은 최대 10개까지예요.");if(!a.includes(b.dataset.htop))a.push(b.dataset.htop);saveState();renderHighlights()});document.querySelectorAll("[data-hrm]").forEach(b=>b.onclick=()=>{state.highlights[k]=hranks().filter(x=>x!==b.dataset.hrm);saveState();renderHighlights()});document.querySelectorAll("[data-hup]").forEach(b=>b.onclick=()=>hmove(b.dataset.hup,-1));document.querySelectorAll("[data-hdown]").forEach(b=>b.onclick=()=>hmove(b.dataset.hdown,1))}
-function hmove(ref,d){const a=hranks(),i=a.indexOf(ref),j=i+d;if(i<0||j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];saveState();renderHighlights()}
-$("highlightModeCandidates").onclick=()=>{highlightMode="candidates";renderHighlights()};$("highlightModeRanking").onclick=()=>{highlightMode="ranking";renderHighlights()};$("highlightPrev").onclick=()=>{highlightCursor=new Date(highlightCursor.getFullYear(),highlightCursor.getMonth()-1,1);renderHighlights()};$("highlightNext").onclick=()=>{highlightCursor=new Date(highlightCursor.getFullYear(),highlightCursor.getMonth()+1,1);renderHighlights()};
+function hemo(k){return k==="4L"?"🔄":k.startsWith("감칭반")?"🌙":k==="하루한줄"?"📖":"✍️"}
+function htxt(t){t=String(t||"").replace(/\s+/g," ").trim();return t.length>140?t.slice(0,140)+"…":t}
+function renderHighlights(){if(!$("highlightRows"))return;const k=hmk(),all=hcands(),selected=hranks().filter(r=>all.some(x=>x.ref===r));state.highlights[k]=selected;const available=all.filter(x=>!selected.includes(x.ref));if(monthPieceIndex>=available.length)monthPieceIndex=0;const cur=available[monthPieceIndex];$("highlightTitle").textContent=`💎 ${highlightCursor.getFullYear()}년 ${highlightCursor.getMonth()+1}월의 조각`;const current=cur?`<div class="monthPieceCard"><div class="hcMeta">${hemo(cur.kind)} ${esc(cur.kind)} · ${esc(cur.date)}${cur.time?` · ${esc(cur.time)}`:""}</div><div class="hcText" style="margin-top:9px">${esc(htxt(cur.text))}</div><div class="monthPieceActions"><button id="pieceSkip" class="secondary">넘기기</button><button id="pieceKeep" class="primary">💜 이달의 조각으로 남기기</button></div></div>`:`<div class="highlightEmpty">이번 달 기록을 모두 살펴봤어요. 💜</div>`;const chosen=selected.map(r=>all.find(x=>x.ref===r)).filter(Boolean);const chosenHtml=chosen.length?chosen.map(x=>`<div class="monthPieceCard"><div class="hcMeta">${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}${x.time?` · ${esc(x.time)}`:""}</div><div class="hcText" style="margin-top:9px">${esc(htxt(x.text))}</div><div class="hcActions"><button class="small danger" data-piece-remove="${esc(x.ref)}">조각에서 빼기</button></div></div>`).join(""):`<div class="highlightEmpty">아직 남긴 조각이 없어요.</div>`;$("highlightRows").innerHTML=`<div class="highlightSectionTitle"><h3>✨ 이번 달 기록</h3><span class="tiny">${available.length}개 남음</span></div>${current}<div class="highlightSectionTitle monthPieceSelected"><h3>💎 내가 남긴 조각</h3><span class="tiny">${chosen.length}개</span></div>${chosenHtml}`;if($("pieceSkip"))$("pieceSkip").onclick=()=>{if(available.length)monthPieceIndex=(monthPieceIndex+1)%available.length;renderHighlights()};if($("pieceKeep"))$("pieceKeep").onclick=()=>{if(cur&&!state.highlights[k].includes(cur.ref))state.highlights[k].push(cur.ref);monthPieceIndex=0;saveState();renderHighlights();toast("이달의 조각으로 남겼어요")};document.querySelectorAll("[data-piece-remove]").forEach(b=>b.onclick=()=>{state.highlights[k]=hranks().filter(x=>x!==b.dataset.pieceRemove);saveState();renderHighlights()})}
+$("highlightPrev").onclick=()=>{highlightCursor=new Date(highlightCursor.getFullYear(),highlightCursor.getMonth()-1,1);monthPieceIndex=0;renderHighlights()};$("highlightNext").onclick=()=>{highlightCursor=new Date(highlightCursor.getFullYear(),highlightCursor.getMonth()+1,1);monthPieceIndex=0;renderHighlights()};
 
 
 
@@ -991,8 +981,8 @@ onAuthStateChanged(auth,async u=>{
     renderEverything();
     booted=true;
   }catch(e){
-    $("cloudStatus").textContent="⚠️ 동기화 오류";
-    $("authMsg").textContent="클라우드 데이터를 불러오지 못했어요: "+e.message;
+    $("cloudStatus").textContent="⚠️ 동기화 오류 · "+(e.code||e.message||"unknown");
+    $("authMsg").textContent="클라우드 데이터를 불러오지 못했어요: "+(e.code?e.code+" · ":"")+e.message;
     console.error(e);
   }
 });
