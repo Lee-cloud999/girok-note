@@ -1,26 +1,30 @@
 {
-  "name": "나의 기록",
-  "short_name": "나의 기록",
-  "description": "한달기록, 디깅기록, 버킷리스트, 셀프 Q&A를 한곳에 모으는 동기화 기록 앱",
+  "name": "기록노트",
+  "short_name": "기록노트",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f7f3eb",
-  "theme_color": "#f7f3eb",
-  "lang": "ko-KR",
-  "orientation": "any",
+  "background_color": "#f8f6ff",
+  "theme_color": "#f8f6ff",
+  "lang": "ko",
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "./icon-512.png",
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "./",
+  "description": "개인 기록노트"
 }
