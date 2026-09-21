@@ -24,5 +24,7 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "./",
+  "description": "개인 기록노트"
 }
