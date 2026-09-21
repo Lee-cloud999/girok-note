@@ -749,6 +749,44 @@ let currentUser=null, cloudReady=false, cloudTimer=null, booted=false;
 const TYPES=["✍️ 한 줄 기록","💬 아이디어","💻 개발노트","💜 감정","🗒️ 지식 메모","📚 독서와 필사","🎓 강의 메모"];
 const $=id=>document.getElementById(id);
 const STORE='girok-note-online-v12';
+
+// 인증 UI는 다른 화면 초기화 오류와 무관하게 가장 먼저 동작하도록 연결
+const loginBtnEarly=document.getElementById("loginBtn");
+const signupBtnEarly=document.getElementById("signupBtn");
+if(loginBtnEarly)loginBtnEarly.onclick=async()=>{
+  const msg=document.getElementById("authMsg");
+  try{
+    if(msg)msg.textContent="로그인 중…";
+    await signInWithEmailAndPassword(auth,document.getElementById("authEmail").value.trim(),document.getElementById("authPassword").value);
+  }catch(e){
+    if(msg)msg.textContent="로그인 실패: "+(e.code||e.message||"unknown");
+  }
+};
+if(signupBtnEarly)signupBtnEarly.onclick=async()=>{
+  const msg=document.getElementById("authMsg");
+  try{
+    if(msg)msg.textContent="가입 중…";
+    await createUserWithEmailAndPassword(auth,document.getElementById("authEmail").value.trim(),document.getElementById("authPassword").value);
+  }catch(e){
+    if(msg)msg.textContent="가입 실패: "+(e.code||e.message||"unknown");
+  }
+};
+onAuthStateChanged(auth,async u=>{
+  currentUser=u;
+  const overlay=document.getElementById("authOverlay");
+  if(overlay)overlay.classList.toggle("hidden",!!u);
+  if(!u){cloudReady=false;const cs=document.getElementById("cloudStatus");if(cs)cs.textContent="☁️ 로그인이 필요해요";return}
+  try{
+    const cs=document.getElementById("cloudStatus");if(cs)cs.textContent="☁️ 동기화 중…";
+    await loadCloudState();
+    renderEverything();
+    booted=true;
+  }catch(e){
+    const cs=document.getElementById("cloudStatus");if(cs)cs.textContent="⚠️ 동기화 오류 · "+(e.code||e.message||"unknown");
+    const msg=document.getElementById("authMsg");if(msg)msg.textContent="클라우드 데이터를 불러오지 못했어요: "+(e.code||e.message||"unknown");
+  }
+});
+
 const LEGACY_STORE='girok-note-offline-v8';
 function emptyState(){return {records:[],plans:[],daily:{},fourL:[],monthLines:{},monthLineFavorites:{},moods:[],highlights:{},highlightCandidates:{},highlightSkipped:{}}}
 let state=emptyState();
@@ -1377,8 +1415,6 @@ renderRecords();renderPlans();renderOverview();renderCalendar();renderSelectedDa
 
 
 function renderEverything(){renderRecords();renderPlans();renderOverview();renderDailyList();renderFourL();renderMonthLines();renderMoodDay();renderMoodMonth();renderUnifiedSearch();renderStats();renderFavorites();renderRandomFavorite();renderHighlights();renderCalendar();renderSelectedDaily();}
-$("loginBtn").onclick=async()=>{try{$("authMsg").textContent="";await signInWithEmailAndPassword(auth,$("authEmail").value.trim(),$("authPassword").value)}catch(e){$("authMsg").textContent="로그인 실패: "+e.message}};
-$("signupBtn").onclick=async()=>{try{$("authMsg").textContent="";await createUserWithEmailAndPassword(auth,$("authEmail").value.trim(),$("authPassword").value)}catch(e){$("authMsg").textContent="가입 실패: "+e.message}};
 $("logout").onclick=()=>signOut(auth);
 function exportBackup(){const blob=new Blob([JSON.stringify({app:"기록노트",version:23,exportedAt:new Date().toISOString(),state},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`기록노트_백업_${backupDay()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("백업 파일을 저장했어요")};
 $("backupNow").onclick=()=>{$("backupPanel").classList.toggle("hidden");$("backupStatus").textContent=`현재 기록 ${stateCount(state)}개 · 하루 1회 자동 스냅샷`};
@@ -1518,20 +1554,6 @@ $("recoverLegacy").onclick=recoverLegacyFirebase;
 $("backupFile").onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=data.state||data;if(!incoming||typeof incoming!=="object")throw new Error("올바른 기록노트 백업 파일이 아니에요.");if(!confirm(`백업 파일의 기록 ${stateCount(incoming)}개를 복원할까요? 현재 상태는 먼저 Firebase 스냅샷으로 보관합니다.`)){e.target.value="";return}await createCloudSnapshot(state,"before_restore");state={...emptyState(),...incoming};if(!Array.isArray(state.records))state.records=[];if(!Array.isArray(state.plans))state.plans=[];if(!Array.isArray(state.fourL))state.fourL=[];if(!state.daily)state.daily={};if(!state.monthLines)state.monthLines={};if(!Array.isArray(state.moods))state.moods=[];if(!state.highlights)state.highlights={};if(!state.highlightCandidates)state.highlightCandidates={};if(!state.highlightSkipped)state.highlightSkipped={};if(!state.monthLineFavorites)state.monthLineFavorites={};localStorage.setItem(STORE,JSON.stringify(state));await syncStateToCloud();renderEverything();toast("백업 파일을 복원했어요");$("backupPanel").classList.add("hidden")}catch(err){alert("백업 복원에 실패했어요: "+err.message)}e.target.value=""};
 
 
-onAuthStateChanged(auth,async u=>{
-  currentUser=u;
-  $("authOverlay").classList.toggle("hidden",!!u);
-  if(!u){cloudReady=false;$("cloudStatus").textContent="☁️ 로그인이 필요해요";return}
-  try{
-    $("cloudStatus").textContent="☁️ 동기화 중…";
-    await loadCloudState();
-    renderEverything();
-    booted=true;
-  }catch(e){
-    $("cloudStatus").textContent="⚠️ 동기화 오류 · "+(e.code||e.message||"unknown");
-    $("authMsg").textContent="클라우드 데이터를 불러오지 못했어요: "+(e.code?e.code+" · ":"")+e.message;
-    console.error(e);
-  }
-});
+
 </script>
 </body></html>
