@@ -859,7 +859,7 @@ function hcands(){
   Object.entries(state.monthLines||{}).filter(([d,v])=>d.startsWith(mk)&&String(v||"").trim()).forEach(([d,v])=>{const sortTime=state.monthLineTimes?.[d]||hFallbackIso(d);a.push({ref:href("m",d),kind:"하루한줄",date:d,sortTime,time:hTimeLabel(sortTime),text:v})});
   return a.sort((x,y)=>String(y.sortTime||y.date).localeCompare(String(x.sortTime||x.date)));
 }
-function hmeta(x){return `${hmeta(x)}${x.time?` · ${esc(x.time)}`:""}`}
+function hmeta(x){return `${hemo(x.kind)} ${esc(x.kind)} · ${esc(x.date)}${x.time?` · ${esc(x.time)}`:""}`}
 
 function hsel(){const k=hmk();if(!Array.isArray(state.highlightCandidates[k]))state.highlightCandidates[k]=[];return state.highlightCandidates[k]}
 function hranks(){const k=hmk();if(!Array.isArray(state.highlights[k]))state.highlights[k]=[];return state.highlights[k]}
